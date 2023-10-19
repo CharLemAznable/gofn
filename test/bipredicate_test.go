@@ -1,7 +1,8 @@
-package bipredicate
+package test
 
 import (
 	"fmt"
+	"github.com/CharLemAznable/gofn/bipredicate"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,9 +16,9 @@ func TestBiPredicate(t *testing.T) {
 	errorFn := func(str1, str2 string) (bool, error) {
 		return false, fmt.Errorf(str1 + str2)
 	}
-	predicate := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+	predicate := bipredicate.Of(normalFn)
+	checked := bipredicate.Checked(errorFn)
+	unchecked := bipredicate.Unchecked(errorFn)
 
 	ret0 := predicate("ok", "k")
 	ret1, err := checked("error", " fail")

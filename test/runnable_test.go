@@ -1,7 +1,8 @@
-package runnable
+package test
 
 import (
 	"fmt"
+	runnable2 "github.com/CharLemAznable/gofn/runnable"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,9 +17,9 @@ func TestRunnable(t *testing.T) {
 	errorFn := func() error {
 		return fmt.Errorf("error")
 	}
-	runnable := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+	runnable := runnable2.Of(normalFn)
+	checked := runnable2.Checked(errorFn)
+	unchecked := runnable2.Unchecked(errorFn)
 
 	runnable()
 	_ = checked()

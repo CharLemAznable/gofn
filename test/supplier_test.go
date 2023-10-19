@@ -1,7 +1,8 @@
-package supplier
+package test
 
 import (
 	"fmt"
+	supplier2 "github.com/CharLemAznable/gofn/supplier"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,9 +16,9 @@ func TestSupplier(t *testing.T) {
 	errorFn := func() (string, error) {
 		return "", fmt.Errorf("error")
 	}
-	supplier := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+	supplier := supplier2.Of(normalFn)
+	checked := supplier2.Checked(errorFn)
+	unchecked := supplier2.Unchecked(errorFn)
 
 	ret0 := supplier()
 	ret1, err := checked()
