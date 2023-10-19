@@ -1,8 +1,7 @@
-package test
+package biconsumer
 
 import (
 	"fmt"
-	"github.com/CharLemAznable/gofn/biconsumer"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,9 +16,9 @@ func TestBiConsumer(t *testing.T) {
 	errorFn := func(str1, str2 string) error {
 		return fmt.Errorf(str1 + str2)
 	}
-	consumer := biconsumer.Of(normalFn)
-	checked := biconsumer.Checked(errorFn)
-	unchecked := biconsumer.Unchecked(errorFn)
+	consumer := Of(normalFn)
+	checked := Checked(errorFn)
+	unchecked := Unchecked(errorFn)
 
 	consumer("ok", "k")
 	err := checked("error", " fail")

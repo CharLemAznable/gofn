@@ -1,8 +1,7 @@
-package test
+package unaryoperator
 
 import (
 	"fmt"
-	"github.com/CharLemAznable/gofn/unaryoperator"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,9 +15,9 @@ func TestUnaryOperator(t *testing.T) {
 	errorFn := func(str string) (string, error) {
 		return "", fmt.Errorf(str)
 	}
-	unaryOp := unaryoperator.Of(normalFn)
-	checked := unaryoperator.Checked(errorFn)
-	unchecked := unaryoperator.Unchecked(errorFn)
+	unaryOp := Of(normalFn)
+	checked := Checked(errorFn)
+	unchecked := Unchecked(errorFn)
 
 	ret0 := unaryOp("ok")
 	ret1, err := checked("error")

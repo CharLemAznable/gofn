@@ -1,8 +1,7 @@
-package test
+package bifunction
 
 import (
 	"fmt"
-	"github.com/CharLemAznable/gofn/bifunction"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,9 +15,9 @@ func TestBiFunction(t *testing.T) {
 	errorFn := func(str1, str2 string) (string, error) {
 		return "", fmt.Errorf(str1 + str2)
 	}
-	function := bifunction.Of(normalFn)
-	checked := bifunction.Checked(errorFn)
-	unchecked := bifunction.Unchecked(errorFn)
+	function := Of(normalFn)
+	checked := Checked(errorFn)
+	unchecked := Unchecked(errorFn)
 
 	ret0 := function("ok", "k")
 	ret1, err := checked("error", " fail")
