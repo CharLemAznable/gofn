@@ -1,6 +1,7 @@
-package supplier
+package supplier_test
 
 import (
+	"github.com/CharLemAznable/gofn/supplier"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +12,7 @@ func TestOf(t *testing.T) {
 	fn := func() (int, error) {
 		return 10, nil
 	}
-	s := Of(fn)
+	s := supplier.Of(fn)
 	result, err := s()
 	assert.NoError(t, err)
 	assert.Equal(t, 10, result)
@@ -20,7 +21,7 @@ func TestOf(t *testing.T) {
 	fn2 := func() (string, error) {
 		return "hello", nil
 	}
-	s2 := Of(fn2)
+	s2 := supplier.Of(fn2)
 	result2, err2 := s2()
 	assert.NoError(t, err2)
 	assert.Equal(t, "hello", result2)
@@ -31,7 +32,7 @@ func TestCast(t *testing.T) {
 	fn := func() int {
 		return 10
 	}
-	s := Cast(fn)
+	s := supplier.Cast(fn)
 	result, err := s()
 	assert.NoError(t, err)
 	assert.Equal(t, 10, result)
@@ -40,7 +41,7 @@ func TestCast(t *testing.T) {
 	fn2 := func() string {
 		return "hello"
 	}
-	s2 := Cast(fn2)
+	s2 := supplier.Cast(fn2)
 	result2, err2 := s2()
 	assert.NoError(t, err2)
 	assert.Equal(t, "hello", result2)
@@ -51,7 +52,7 @@ func TestSupplier_Fn(t *testing.T) {
 	fn := func() (int, error) {
 		return 10, nil
 	}
-	s := Of(fn)
+	s := supplier.Of(fn)
 	result := s.Fn()
 	assert.Equal(t, 10, result)
 
@@ -59,7 +60,7 @@ func TestSupplier_Fn(t *testing.T) {
 	fn2 := func() (string, error) {
 		return "hello", nil
 	}
-	s2 := Of(fn2)
+	s2 := supplier.Of(fn2)
 	result2 := s2.Fn()
 	assert.Equal(t, "hello", result2)
 }
@@ -69,7 +70,7 @@ func TestSupplier_Get(t *testing.T) {
 	fn := func() (int, error) {
 		return 10, nil
 	}
-	s := Of(fn)
+	s := supplier.Of(fn)
 	result := s.Get()
 	assert.Equal(t, 10, result)
 
@@ -77,7 +78,21 @@ func TestSupplier_Get(t *testing.T) {
 	fn2 := func() (string, error) {
 		return "hello", nil
 	}
-	s2 := Of(fn2)
+	s2 := supplier.Of(fn2)
 	result2 := s2.Get()
 	assert.Equal(t, "hello", result2)
+}
+
+func TestConstant(t *testing.T) {
+	fn := supplier.Constant("test")
+
+	value, err := fn()
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+
+	expected := "test"
+	if value != expected {
+		t.Errorf("Expected %s, but got: %s", expected, value)
+	}
 }

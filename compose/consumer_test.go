@@ -1,7 +1,8 @@
-package compose
+package compose_test
 
 import (
 	"errors"
+	"github.com/CharLemAznable/gofn/compose"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,14 +17,14 @@ func TestApplyThenConsume(t *testing.T) {
 	}
 
 	// Test case 1: functionFn and consumerFn return no error
-	err := ApplyThenConsume(functionFn, consumerFn)(1)
+	err := compose.ApplyThenConsume(functionFn, consumerFn)(1)
 	assert.NoError(t, err)
 
 	// Test case 2: functionFn returns an error
 	functionFn = func(t interface{}) (interface{}, error) {
 		return nil, errors.New("function error")
 	}
-	err = ApplyThenConsume(functionFn, consumerFn)(1)
+	err = compose.ApplyThenConsume(functionFn, consumerFn)(1)
 	assert.EqualError(t, err, "function error")
 
 	// Test case 3: consumerFn returns an error
@@ -33,11 +34,11 @@ func TestApplyThenConsume(t *testing.T) {
 	consumerFn = func(r interface{}) error {
 		return errors.New("consumer error")
 	}
-	err = ApplyThenConsume(functionFn, consumerFn)(1)
+	err = compose.ApplyThenConsume(functionFn, consumerFn)(1)
 	assert.EqualError(t, err, "consumer error")
 }
 
-func TestTestThenRun(t *testing.T) {
+func TestCheckThenRun(t *testing.T) {
 	// Mock predicateFn and runnableFn
 	predicateFn := func(t interface{}) (bool, error) {
 		return true, nil
@@ -47,21 +48,21 @@ func TestTestThenRun(t *testing.T) {
 	}
 
 	// Test case 1: predicateFn returns true and no error
-	err := TestThenRun(predicateFn, runnableFn)(1)
+	err := compose.CheckThenRun(predicateFn, runnableFn)(1)
 	assert.NoError(t, err)
 
 	// Test case 2: predicateFn returns false
 	predicateFn = func(t interface{}) (bool, error) {
 		return false, nil
 	}
-	err = TestThenRun(predicateFn, runnableFn)(1)
+	err = compose.CheckThenRun(predicateFn, runnableFn)(1)
 	assert.EqualError(t, err, "predicate failed")
 
 	// Test case 3: predicateFn returns an error
 	predicateFn = func(t interface{}) (bool, error) {
 		return true, errors.New("predicate error")
 	}
-	err = TestThenRun(predicateFn, runnableFn)(1)
+	err = compose.CheckThenRun(predicateFn, runnableFn)(1)
 	assert.EqualError(t, err, "predicate error")
 
 	// Test case 4: runnableFn returns an error
@@ -71,6 +72,44 @@ func TestTestThenRun(t *testing.T) {
 	runnableFn = func() error {
 		return errors.New("runnable error")
 	}
-	err = TestThenRun(predicateFn, runnableFn)(1)
+	err = compose.CheckThenRun(predicateFn, runnableFn)(1)
+	assert.EqualError(t, err, "runnable error")
+}
+
+func TestCheckThenConsume(t *testing.T) {
+	// Mock predicateFn and consumerFn
+	predicateFn := func(t interface{}) (bool, error) {
+		return true, nil
+	}
+	consumerFn := func(t interface{}) error {
+		return nil
+	}
+
+	// Test case 1: predicateFn returns true and no error
+	err := compose.CheckThenConsume(predicateFn, consumerFn)(1)
+	assert.NoError(t, err)
+
+	// Test case 2: predicateFn returns false
+	predicateFn = func(t interface{}) (bool, error) {
+		return false, nil
+	}
+	err = compose.CheckThenConsume(predicateFn, consumerFn)(1)
+	assert.EqualError(t, err, "predicate failed")
+
+	// Test case 3: predicateFn returns an error
+	predicateFn = func(t interface{}) (bool, error) {
+		return true, errors.New("predicate error")
+	}
+	err = compose.CheckThenConsume(predicateFn, consumerFn)(1)
+	assert.EqualError(t, err, "predicate error")
+
+	// Test case 4: consumerFn returns an error
+	predicateFn = func(t interface{}) (bool, error) {
+		return true, nil
+	}
+	consumerFn = func(t interface{}) error {
+		return errors.New("runnable error")
+	}
+	err = compose.CheckThenConsume(predicateFn, consumerFn)(1)
 	assert.EqualError(t, err, "runnable error")
 }

@@ -5,12 +5,14 @@ import (
 	"github.com/CharLemAznable/gofn/supplier"
 )
 
-func SupplyThenApply[T any, R any](supplierFn supplier.Supplier[T], functionFn function.Function[T, R], errVal R) supplier.Supplier[R] {
+func SupplyThenApply[T any, R any](supplierFn supplier.Supplier[T],
+	functionFn function.Function[T, R],
+	errorFn supplier.Supplier[R]) supplier.Supplier[R] {
 	return func() (R, error) {
-		if t, err := supplierFn(); err != nil {
-			return errVal, err
-		} else {
-			return functionFn(t)
+		t, err := supplierFn()
+		if err != nil {
+			return errorFn()
 		}
+		return functionFn(t)
 	}
 }

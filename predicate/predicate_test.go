@@ -1,13 +1,14 @@
-package predicate
+package predicate_test
 
 import (
 	"errors"
+	"github.com/CharLemAznable/gofn/predicate"
 	"testing"
 )
 
 func TestOf(t *testing.T) {
 	// Test case 1: fn returns true
-	fn := Of(func(n int) (bool, error) {
+	fn := predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result, err := fn(5)
@@ -19,7 +20,7 @@ func TestOf(t *testing.T) {
 	}
 
 	// Test case 2: fn returns false
-	fn = Of(func(n int) (bool, error) {
+	fn = predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result, err = fn(-5)
@@ -32,7 +33,7 @@ func TestOf(t *testing.T) {
 
 	// Test case 3: fn returns error
 	expectedErr := "Some error occurred"
-	fn = Of(func(n int) (bool, error) {
+	fn = predicate.Of(func(n int) (bool, error) {
 		return false, errors.New(expectedErr)
 	})
 	result, err = fn(5)
@@ -49,7 +50,7 @@ func TestOf(t *testing.T) {
 
 func TestCast(t *testing.T) {
 	// Test case 1: fn returns true
-	fn := Cast(func(n int) bool {
+	fn := predicate.Cast(func(n int) bool {
 		return n > 0
 	})
 	result, err := fn(5)
@@ -61,7 +62,7 @@ func TestCast(t *testing.T) {
 	}
 
 	// Test case 2: fn returns false
-	fn = Cast(func(n int) bool {
+	fn = predicate.Cast(func(n int) bool {
 		return n > 0
 	})
 	result, err = fn(-5)
@@ -75,7 +76,7 @@ func TestCast(t *testing.T) {
 
 func TestPredicateFn(t *testing.T) {
 	// Test case 1: fn returns true
-	fn := Of(func(n int) (bool, error) {
+	fn := predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result := fn.Fn(5)
@@ -84,7 +85,7 @@ func TestPredicateFn(t *testing.T) {
 	}
 
 	// Test case 2: fn returns false
-	fn = Of(func(n int) (bool, error) {
+	fn = predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result = fn.Fn(-5)
@@ -95,7 +96,7 @@ func TestPredicateFn(t *testing.T) {
 
 func TestPredicateTest(t *testing.T) {
 	// Test case 1: fn returns true
-	fn := Of(func(n int) (bool, error) {
+	fn := predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result := fn.Test(5)
@@ -104,7 +105,7 @@ func TestPredicateTest(t *testing.T) {
 	}
 
 	// Test case 2: fn returns false
-	fn = Of(func(n int) (bool, error) {
+	fn = predicate.Of(func(n int) (bool, error) {
 		return n > 0, nil
 	})
 	result = fn.Test(-5)

@@ -1,6 +1,7 @@
-package consumer
+package consumer_test
 
 import (
+	"github.com/CharLemAznable/gofn/consumer"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestOf(t *testing.T) {
 		return nil
 	}
 
-	c := Of(fn)
+	c := consumer.Of(fn)
 
 	err := c(10)
 	if err != nil {
@@ -23,7 +24,7 @@ func TestCast(t *testing.T) {
 		// test implementation
 	}
 
-	c := Cast(fn)
+	c := consumer.Cast(fn)
 
 	err := c(10)
 	if err != nil {
@@ -37,7 +38,7 @@ func TestConsumerFn(t *testing.T) {
 		return nil
 	}
 
-	c := Of(fn)
+	c := consumer.Of(fn)
 
 	c.Fn(10)
 }
@@ -48,7 +49,7 @@ func TestConsumerAccept(t *testing.T) {
 		return nil
 	}
 
-	c := Of(fn)
+	c := consumer.Of(fn)
 
 	c.Accept(10)
 }

@@ -1,11 +1,12 @@
-package bifunction
+package bifunction_test
 
 import (
+	"github.com/CharLemAznable/gofn/bifunction"
 	"testing"
 )
 
 func TestOf(t *testing.T) {
-	fn := Of(func(t int, u string) (bool, error) {
+	fn := bifunction.Of(func(t int, u string) (bool, error) {
 		return true, nil
 	})
 
@@ -16,7 +17,7 @@ func TestOf(t *testing.T) {
 }
 
 func TestCast(t *testing.T) {
-	fn := Cast(func(t int, u string) bool {
+	fn := bifunction.Cast(func(t int, u string) bool {
 		return true
 	})
 
@@ -27,7 +28,7 @@ func TestCast(t *testing.T) {
 }
 
 func TestFn(t *testing.T) {
-	fn := Of(func(t int, u string) (bool, error) {
+	fn := bifunction.Of(func(t int, u string) (bool, error) {
 		return true, nil
 	})
 
@@ -38,7 +39,7 @@ func TestFn(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
-	fn := Of(func(t int, u string) (bool, error) {
+	fn := bifunction.Of(func(t int, u string) (bool, error) {
 		return true, nil
 	})
 
@@ -49,7 +50,7 @@ func TestApply(t *testing.T) {
 }
 
 func TestCurry(t *testing.T) {
-	fn := Of(func(t int, u string) (bool, error) {
+	fn := bifunction.Of(func(t int, u string) (bool, error) {
 		return true, nil
 	})
 
@@ -61,7 +62,7 @@ func TestCurry(t *testing.T) {
 }
 
 func TestPartial(t *testing.T) {
-	fn := Of(func(t int, u string) (bool, error) {
+	fn := bifunction.Of(func(t int, u string) (bool, error) {
 		return true, nil
 	})
 

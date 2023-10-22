@@ -17,12 +17,13 @@ func RunInSequence(functions ...runnable.Runnable) runnable.Runnable {
 	}
 }
 
-func SupplyThenConsume[T any](supplierFn supplier.Supplier[T], consumerFn consumer.Consumer[T]) runnable.Runnable {
+func SupplyThenConsume[T any](supplierFn supplier.Supplier[T],
+	consumerFn consumer.Consumer[T]) runnable.Runnable {
 	return func() error {
-		if t, err := supplierFn(); err != nil {
+		t, err := supplierFn()
+		if err != nil {
 			return err
-		} else {
-			return consumerFn(t)
 		}
+		return consumerFn(t)
 	}
 }

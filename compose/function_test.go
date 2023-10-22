@@ -1,78 +1,116 @@
-package compose
+package compose_test
 
 import (
 	"errors"
-	"strconv"
+	"github.com/CharLemAznable/gofn/compose"
+	"github.com/CharLemAznable/gofn/predicate"
 	"testing"
 )
 
 func TestThenApply(t *testing.T) {
-	fn1 := func(t int) (int, error) {
+	// 定义测试用的函数和供应器
+	fn1 := func(t int) (string, error) {
 		if t < 0 {
-			return 0, errors.New("negative number")
+			return "", errors.New("negative number")
 		}
-		return t, nil
+		return "positive number", nil
+	}
+	fn2 := func(s string) (int, error) {
+		if s == "positive number" {
+			return 1, nil
+		}
+		return 0, errors.New("unexpected string")
+	}
+	errFn := func() (int, error) {
+		return 0, errors.New("error function called")
 	}
 
-	fn2 := func(t int) (string, error) {
-		return "result: " + strconv.Itoa(t), nil
-	}
+	// 创建被测试的函数
+	fn := compose.ThenApply(fn1, fn2, errFn)
 
-	errVal := "error"
-	applyFn := ThenApply(fn1, fn2, errVal)
-
-	result, err := applyFn(10)
+	// 执行测试用例
+	result, err := fn(10)
 	if err != nil {
-		t.Errorf("Expected nil error, but got: %v", err)
+		t.Errorf("expected nil error, got %v", err)
 	}
-	expected := "result: 10"
-	if result != expected {
-		t.Errorf("Expected result: %s, but got: %s", expected, result)
+	if result != 1 {
+		t.Errorf("expected result 1, got %d", result)
 	}
 
-	result, err = applyFn(-5)
+	result, err = fn(-5)
 	if err == nil {
-		t.Error("Expected non-nil error, but got nil")
+		t.Error("expected non-nil error, got nil")
 	}
-	expectedErr := "negative number"
-	if err.Error() != expectedErr {
-		t.Errorf("Expected error: %s, but got: %v", expectedErr, err)
-	}
-	if result != errVal {
-		t.Errorf("Expected result: %s, but got: %s", errVal, result)
+	if result != 0 {
+		t.Errorf("expected result 0, got %d", result)
 	}
 }
 
-func TestTestThenSupply(t *testing.T) {
-	predicateFn := func(t int) (bool, error) {
-		return t > 0, nil
+func TestCheckThenSupply(t *testing.T) {
+	// 定义测试用的断言函数和供应器
+	predicateFn := func(t int) bool {
+		return t > 0
+	}
+	supplierFn := func() (string, error) {
+		return "positive number", nil
+	}
+	errFn := func() (string, error) {
+		return "", errors.New("error function called")
 	}
 
-	supplierFn := func() (int, error) {
-		return 10, nil
-	}
+	// 创建被测试的函数
+	fn := compose.CheckThenSupply(predicate.Cast(predicateFn), supplierFn, errFn)
 
-	errVal := 0
-	supplyFn := TestThenSupply(predicateFn, supplierFn, errVal)
-
-	result, err := supplyFn(5)
+	// 执行测试用例
+	result, err := fn(10)
 	if err != nil {
-		t.Errorf("Expected nil error, but got: %v", err)
+		t.Errorf("expected nil error, got %v", err)
 	}
-	expected := 10
-	if result != expected {
-		t.Errorf("Expected result: %d, but got: %d", expected, result)
+	if result != "positive number" {
+		t.Errorf("expected result 'positive number', got '%s'", result)
 	}
 
-	result, err = supplyFn(-5)
+	result, err = fn(-5)
 	if err == nil {
-		t.Error("Expected non-nil error, but got nil")
+		t.Error("expected non-nil error, got nil")
 	}
-	expectedErr := "predicate failed"
-	if err.Error() != expectedErr {
-		t.Errorf("Expected error: %s, but got: %v", expectedErr, err)
+	if result != "" {
+		t.Errorf("expected empty result, got '%s'", result)
 	}
-	if result != errVal {
-		t.Errorf("Expected result: %d, but got: %d", errVal, result)
+}
+
+func TestCheckThenApply(t *testing.T) {
+	// 定义测试用的断言函数和函数
+	predicateFn := func(t int) bool {
+		return t > 0
+	}
+	fn := func(t int) (string, error) {
+		if t > 0 {
+			return "positive number", nil
+		}
+		return "", errors.New("negative number")
+	}
+	errFn := func() (string, error) {
+		return "", errors.New("error function called")
+	}
+
+	// 创建被测试的函数
+	f := compose.CheckThenApply(predicate.Cast(predicateFn), fn, errFn)
+
+	// 执行测试用例
+	result, err := f(10)
+	if err != nil {
+		t.Errorf("expected nil error, got %v", err)
+	}
+	if result != "positive number" {
+		t.Errorf("expected result 'positive number', got '%s'", result)
+	}
+
+	result, err = f(-5)
+	if err == nil {
+		t.Error("expected non-nil error, got nil")
+	}
+	if result != "" {
+		t.Errorf("expected empty result, got '%s'", result)
 	}
 }

@@ -1,12 +1,13 @@
-package function
+package function_test
 
 import (
+	"github.com/CharLemAznable/gofn/function"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestOf(t *testing.T) {
-	fn := Of(func(t int) (int, error) {
+	fn := function.Of(func(t int) (int, error) {
 		return t * 2, nil
 	})
 
@@ -17,7 +18,7 @@ func TestOf(t *testing.T) {
 }
 
 func TestCast(t *testing.T) {
-	fn := Cast(func(t int) int {
+	fn := function.Cast(func(t int) int {
 		return t * 2
 	})
 
@@ -28,7 +29,7 @@ func TestCast(t *testing.T) {
 }
 
 func TestFn(t *testing.T) {
-	fn := Of(func(t int) (int, error) {
+	fn := function.Of(func(t int) (int, error) {
 		return t * 2, nil
 	})
 
@@ -38,7 +39,7 @@ func TestFn(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
-	fn := Of(func(t int) (int, error) {
+	fn := function.Of(func(t int) (int, error) {
 		return t * 2, nil
 	})
 
@@ -48,7 +49,7 @@ func TestApply(t *testing.T) {
 }
 
 func TestIdentity(t *testing.T) {
-	fn := Identity[int]()
+	fn := function.Identity[int]()
 
 	result, err := fn(5)
 
@@ -66,7 +67,7 @@ func TestYCombinator(t *testing.T) {
 		}
 	}
 
-	fac := YCombinator(f1)
+	fac := function.YCombinator(f1)
 
 	result := fac(5)
 
@@ -81,7 +82,7 @@ func TestYCombinator(t *testing.T) {
 		}
 	}
 
-	fib := YCombinator(f2)
+	fib := function.YCombinator(f2)
 
 	result2 := fib(10)
 

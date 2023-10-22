@@ -1,13 +1,14 @@
-package runnable
+package runnable_test
 
 import (
 	"errors"
+	"github.com/CharLemAznable/gofn/runnable"
 	"testing"
 )
 
 func TestOf(t *testing.T) {
 	err := errors.New("test error")
-	runnableFn := Of(func() error {
+	runnableFn := runnable.Of(func() error {
 		return err
 	})
 
@@ -19,7 +20,7 @@ func TestOf(t *testing.T) {
 
 func TestCast(t *testing.T) {
 	fnCalled := false
-	runnableFn := Cast(func() {
+	runnableFn := runnable.Cast(func() {
 		fnCalled = true
 	})
 
@@ -35,7 +36,7 @@ func TestCast(t *testing.T) {
 
 func TestRunnable_Run(t *testing.T) {
 	fnCalled := false
-	runnableFn := Runnable(func() error {
+	runnableFn := runnable.Runnable(func() error {
 		fnCalled = true
 		return nil
 	})

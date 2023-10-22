@@ -20,3 +20,9 @@ func (fn Supplier[T]) Fn() T {
 func (fn Supplier[T]) Get() T {
 	return fn.Fn()
 }
+
+func Constant[T any](t T) Supplier[T] {
+	return func() (T, error) {
+		return t, nil
+	}
+}

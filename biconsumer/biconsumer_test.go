@@ -1,6 +1,7 @@
-package biconsumer
+package biconsumer_test
 
 import (
+	"github.com/CharLemAznable/gofn/biconsumer"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestOf(t *testing.T) {
 		return nil
 	}
 
-	bc := Of(fn)
+	bc := biconsumer.Of(fn)
 
 	err := bc(10, "test")
 	if err != nil {
@@ -23,7 +24,7 @@ func TestCast(t *testing.T) {
 		// test implementation
 	}
 
-	bc := Cast(fn)
+	bc := biconsumer.Cast(fn)
 
 	err := bc(10, "test")
 	if err != nil {
@@ -37,7 +38,7 @@ func TestFn(t *testing.T) {
 		return nil
 	}
 
-	bc := Of(fn)
+	bc := biconsumer.Of(fn)
 
 	bc.Fn(10, "test")
 }
@@ -48,7 +49,7 @@ func TestAccept(t *testing.T) {
 		return nil
 	}
 
-	bc := Of(fn)
+	bc := biconsumer.Of(fn)
 
 	bc.Accept(10, "test")
 }

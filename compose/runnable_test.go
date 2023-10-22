@@ -1,7 +1,8 @@
-package compose
+package compose_test
 
 import (
 	"errors"
+	"github.com/CharLemAznable/gofn/compose"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,12 +18,12 @@ func TestRunInSequence(t *testing.T) {
 	fn3 := func() error { return err2 }
 	fn4 := func() error { return err3 }
 
-	fn := RunInSequence(fn1, fn2, fn3, fn4)
+	fn := compose.RunInSequence(fn1, fn2, fn3, fn4)
 	err := fn()
 
 	assert.Equal(t, err1, err)
 
-	fn = RunInSequence(fn1)
+	fn = compose.RunInSequence(fn1)
 	err = fn()
 	assert.NoError(t, err)
 }
@@ -33,13 +34,13 @@ func TestSupplyThenConsume(t *testing.T) {
 	supplierFn := func() (int, error) { return 42, nil }
 	consumerFn := func(t int) error { return nil }
 
-	fn := SupplyThenConsume(supplierFn, consumerFn)
+	fn := compose.SupplyThenConsume(supplierFn, consumerFn)
 	err := fn()
 
 	assert.NoError(t, err)
 
 	supplierFn = func() (int, error) { return 0, e }
-	fn = SupplyThenConsume(supplierFn, consumerFn)
+	fn = compose.SupplyThenConsume(supplierFn, consumerFn)
 	err = fn()
 
 	assert.Equal(t, e, err)
