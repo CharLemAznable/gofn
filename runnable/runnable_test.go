@@ -1,28 +1,48 @@
 package runnable
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
+	"errors"
 	"testing"
 )
 
-func TestRunnable(t *testing.T) {
-	a := assert.New(t)
-	i := 0
+func TestOf(t *testing.T) {
+	err := errors.New("test error")
+	runnableFn := Of(func() error {
+		return err
+	})
 
-	normalFn := func() {
-		i += 1
+	resultErr := runnableFn()
+	if resultErr != err {
+		t.Errorf("Expected error: %v, but got: %v", err, resultErr)
 	}
-	errorFn := func() error {
-		return fmt.Errorf("error")
+}
+
+func TestCast(t *testing.T) {
+	fnCalled := false
+	runnableFn := Cast(func() {
+		fnCalled = true
+	})
+
+	resultErr := runnableFn()
+	if resultErr != nil {
+		t.Errorf("Expected nil error, but got: %v", resultErr)
 	}
-	runnable := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
 
-	runnable()
-	_ = checked()
-	unchecked()
+	if !fnCalled {
+		t.Error("Expected function to be called, but it was not")
+	}
+}
 
-	a.Equal(1, i)
+func TestRunnable_Run(t *testing.T) {
+	fnCalled := false
+	runnableFn := Runnable(func() error {
+		fnCalled = true
+		return nil
+	})
+
+	runnableFn.Run()
+
+	if !fnCalled {
+		t.Error("Expected function to be called, but it was not")
+	}
 }

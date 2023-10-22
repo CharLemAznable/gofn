@@ -1,18 +1,22 @@
 package biconsumer
 
-type BiConsumer[T any, U any] func(T, U)
-type CheckedBiConsumer[T any, U any] func(T, U) error
+type BiConsumer[T any, U any] func(T, U) error
 
-func Of[T any, U any](fn func(T, U)) BiConsumer[T, U] {
+func Of[T any, U any](fn func(T, U) error) BiConsumer[T, U] {
 	return fn
 }
 
-func Checked[T any, U any](fn func(T, U) error) CheckedBiConsumer[T, U] {
-	return fn
-}
-
-func Unchecked[T any, U any](fn func(T, U) error) BiConsumer[T, U] {
-	return func(t T, u U) {
-		_ = fn(t, u)
+func Cast[T any, U any](fn func(T, U)) BiConsumer[T, U] {
+	return func(t T, u U) error {
+		fn(t, u)
+		return nil
 	}
+}
+
+func (fn BiConsumer[T, U]) Fn(t T, u U) {
+	_ = fn(t, u)
+}
+
+func (fn BiConsumer[T, U]) Accept(t T, u U) {
+	fn.Fn(t, u)
 }

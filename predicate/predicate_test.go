@@ -1,30 +1,114 @@
 package predicate
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
+	"errors"
 	"testing"
 )
 
-func TestPredicate(t *testing.T) {
-	a := assert.New(t)
-
-	normalFn := func(str string) bool {
-		return true
+func TestOf(t *testing.T) {
+	// Test case 1: fn returns true
+	fn := Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result, err := fn(5)
+	if err != nil {
+		t.Errorf("Expected nil error, but got %v", err)
 	}
-	errorFn := func(str string) (bool, error) {
-		return false, fmt.Errorf(str)
+	if !result {
+		t.Errorf("Expected true, but got false")
 	}
-	predicate := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
 
-	ret0 := predicate("ok")
-	ret1, err := checked("error")
-	ret2 := unchecked("error")
+	// Test case 2: fn returns false
+	fn = Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result, err = fn(-5)
+	if err != nil {
+		t.Errorf("Expected nil error, but got %v", err)
+	}
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
 
-	a.True(ret0)
-	a.False(ret1)
-	a.Equal("error", err.Error())
-	a.False(ret2)
+	// Test case 3: fn returns error
+	expectedErr := "Some error occurred"
+	fn = Of(func(n int) (bool, error) {
+		return false, errors.New(expectedErr)
+	})
+	result, err = fn(5)
+	if err == nil {
+		t.Errorf("Expected error, but got nil")
+	}
+	if err.Error() != expectedErr {
+		t.Errorf("Expected error message '%s', but got '%s'", expectedErr, err.Error())
+	}
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
+}
+
+func TestCast(t *testing.T) {
+	// Test case 1: fn returns true
+	fn := Cast(func(n int) bool {
+		return n > 0
+	})
+	result, err := fn(5)
+	if err != nil {
+		t.Errorf("Expected nil error, but got %v", err)
+	}
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+
+	// Test case 2: fn returns false
+	fn = Cast(func(n int) bool {
+		return n > 0
+	})
+	result, err = fn(-5)
+	if err != nil {
+		t.Errorf("Expected nil error, but got %v", err)
+	}
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
+}
+
+func TestPredicateFn(t *testing.T) {
+	// Test case 1: fn returns true
+	fn := Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result := fn.Fn(5)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+
+	// Test case 2: fn returns false
+	fn = Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result = fn.Fn(-5)
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
+}
+
+func TestPredicateTest(t *testing.T) {
+	// Test case 1: fn returns true
+	fn := Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result := fn.Test(5)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+
+	// Test case 2: fn returns false
+	fn = Of(func(n int) (bool, error) {
+		return n > 0, nil
+	})
+	result = fn.Test(-5)
+	if result {
+		t.Errorf("Expected false, but got true")
+	}
 }

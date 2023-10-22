@@ -1,29 +1,54 @@
 package consumer
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestConsumer(t *testing.T) {
-	a := assert.New(t)
-	s := ""
-
-	normalFn := func(str string) {
-		s = s + str
+func TestOf(t *testing.T) {
+	fn := func(t int) error {
+		// test implementation
+		return nil
 	}
-	errorFn := func(str string) error {
-		return fmt.Errorf(str)
+
+	c := Of(fn)
+
+	err := c(10)
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
 	}
-	consumer := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+}
 
-	consumer("ok")
-	err := checked("error")
-	unchecked("error")
+func TestCast(t *testing.T) {
+	fn := func(t int) {
+		// test implementation
+	}
 
-	a.Equal("ok", s)
-	a.Equal("error", err.Error())
+	c := Cast(fn)
+
+	err := c(10)
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+}
+
+func TestConsumerFn(t *testing.T) {
+	fn := func(t int) error {
+		// test implementation
+		return nil
+	}
+
+	c := Of(fn)
+
+	c.Fn(10)
+}
+
+func TestConsumerAccept(t *testing.T) {
+	fn := func(t int) error {
+		// test implementation
+		return nil
+	}
+
+	c := Of(fn)
+
+	c.Accept(10)
 }

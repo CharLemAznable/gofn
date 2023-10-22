@@ -1,19 +1,22 @@
 package bipredicate
 
-type BiPredicate[T any, U any] func(T, U) bool
-type CheckedBiPredicate[T any, U any] func(T, U) (bool, error)
+type BiPredicate[T any, U any] func(T, U) (bool, error)
 
-func Of[T any, U any](fn func(T, U) bool) BiPredicate[T, U] {
+func Of[T any, U any](fn func(T, U) (bool, error)) BiPredicate[T, U] {
 	return fn
 }
 
-func Checked[T any, U any](fn func(T, U) (bool, error)) CheckedBiPredicate[T, U] {
-	return fn
-}
-
-func Unchecked[T any, U any](fn func(T, U) (bool, error)) BiPredicate[T, U] {
-	return func(t T, u U) bool {
-		b, _ := fn(t, u)
-		return b
+func Cast[T any, U any](fn func(T, U) bool) BiPredicate[T, U] {
+	return func(t T, u U) (bool, error) {
+		return fn(t, u), nil
 	}
+}
+
+func (fn BiPredicate[T, U]) Fn(t T, u U) bool {
+	b, _ := fn(t, u)
+	return b
+}
+
+func (fn BiPredicate[T, U]) Test(t T, u U) bool {
+	return fn.Fn(t, u)
 }

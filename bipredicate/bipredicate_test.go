@@ -1,30 +1,153 @@
 package bipredicate
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestBiPredicate(t *testing.T) {
-	a := assert.New(t)
-
-	normalFn := func(str1, str2 string) bool {
-		return true
+func TestOf(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		name     string
+		fn       BiPredicate[int, string]
+		input1   int
+		input2   string
+		expected bool
+	}{
+		{
+			name:     "Test case 1",
+			fn:       Of(func(i int, s string) (bool, error) { return i == 10 && s == "hello", nil }),
+			input1:   10,
+			input2:   "hello",
+			expected: true,
+		},
+		{
+			name:     "Test case 2",
+			fn:       Of(func(i int, s string) (bool, error) { return i > 5 && len(s) > 3, nil }),
+			input1:   3,
+			input2:   "world",
+			expected: false,
+		},
+		// Add more test cases as needed
 	}
-	errorFn := func(str1, str2 string) (bool, error) {
-		return false, fmt.Errorf(str1 + str2)
+
+	// Run test cases
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.fn.Fn(tc.input1, tc.input2)
+			if result != tc.expected {
+				t.Errorf("Expected %v, but got %v", tc.expected, result)
+			}
+		})
 	}
-	predicate := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+}
 
-	ret0 := predicate("ok", "k")
-	ret1, err := checked("error", " fail")
-	ret2 := unchecked("error", " fail")
+func TestCast(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		name     string
+		fn       BiPredicate[int, string]
+		input1   int
+		input2   string
+		expected bool
+	}{
+		{
+			name:     "Test case 1",
+			fn:       Cast(func(i int, s string) bool { return i == 10 && s == "hello" }),
+			input1:   10,
+			input2:   "hello",
+			expected: true,
+		},
+		{
+			name:     "Test case 2",
+			fn:       Cast(func(i int, s string) bool { return i > 5 && len(s) > 3 }),
+			input1:   3,
+			input2:   "world",
+			expected: false,
+		},
+		// Add more test cases as needed
+	}
 
-	a.True(ret0)
-	a.False(ret1)
-	a.Equal("error fail", err.Error())
-	a.False(ret2)
+	// Run test cases
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.fn.Fn(tc.input1, tc.input2)
+			if result != tc.expected {
+				t.Errorf("Expected %v, but got %v", tc.expected, result)
+			}
+		})
+	}
+}
+
+func TestBiPredicate_Fn(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		name     string
+		fn       BiPredicate[int, string]
+		input1   int
+		input2   string
+		expected bool
+	}{
+		{
+			name:     "Test case 1",
+			fn:       Of(func(i int, s string) (bool, error) { return i == 10 && s == "hello", nil }),
+			input1:   10,
+			input2:   "hello",
+			expected: true,
+		},
+		{
+			name:     "Test case 2",
+			fn:       Of(func(i int, s string) (bool, error) { return i > 5 && len(s) > 3, nil }),
+			input1:   3,
+			input2:   "world",
+			expected: false,
+		},
+		// Add more test cases as needed
+	}
+
+	// Run test cases
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.fn.Fn(tc.input1, tc.input2)
+			if result != tc.expected {
+				t.Errorf("Expected %v, but got %v", tc.expected, result)
+			}
+		})
+	}
+}
+
+func TestBiPredicate_Test(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		name     string
+		fn       BiPredicate[int, string]
+		input1   int
+		input2   string
+		expected bool
+	}{
+		{
+			name:     "Test case 1",
+			fn:       Of(func(i int, s string) (bool, error) { return i == 10 && s == "hello", nil }),
+			input1:   10,
+			input2:   "hello",
+			expected: true,
+		},
+		{
+			name:     "Test case 2",
+			fn:       Of(func(i int, s string) (bool, error) { return i > 5 && len(s) > 3, nil }),
+			input1:   3,
+			input2:   "world",
+			expected: false,
+		},
+		// Add more test cases as needed
+	}
+
+	// Run test cases
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.fn.Test(tc.input1, tc.input2)
+			if result != tc.expected {
+				t.Errorf("Expected %v, but got %v", tc.expected, result)
+			}
+		})
+	}
 }

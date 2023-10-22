@@ -1,19 +1,22 @@
 package supplier
 
-type Supplier[T any] func() T
-type CheckedSupplier[T any] func() (T, error)
+type Supplier[T any] func() (T, error)
 
-func Of[T any](fn func() T) Supplier[T] {
+func Of[T any](fn func() (T, error)) Supplier[T] {
 	return fn
 }
 
-func Checked[T any](fn func() (T, error)) CheckedSupplier[T] {
-	return fn
-}
-
-func Unchecked[T any](fn func() (T, error)) Supplier[T] {
-	return func() T {
-		t, _ := fn()
-		return t
+func Cast[T any](fn func() T) Supplier[T] {
+	return func() (T, error) {
+		return fn(), nil
 	}
+}
+
+func (fn Supplier[T]) Fn() T {
+	t, _ := fn()
+	return t
+}
+
+func (fn Supplier[T]) Get() T {
+	return fn.Fn()
 }

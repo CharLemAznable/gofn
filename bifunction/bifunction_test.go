@@ -1,30 +1,73 @@
 package bifunction
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestBiFunction(t *testing.T) {
-	a := assert.New(t)
+func TestOf(t *testing.T) {
+	fn := Of(func(t int, u string) (bool, error) {
+		return true, nil
+	})
 
-	normalFn := func(str1, str2 string) string {
-		return str1 + str2
+	r, err := fn(1, "test")
+	if r != true || err != nil {
+		t.Errorf("TestOf failed")
 	}
-	errorFn := func(str1, str2 string) (string, error) {
-		return "", fmt.Errorf(str1 + str2)
+}
+
+func TestCast(t *testing.T) {
+	fn := Cast(func(t int, u string) bool {
+		return true
+	})
+
+	r, err := fn(1, "test")
+	if r != true || err != nil {
+		t.Errorf("TestCast failed")
 	}
-	function := Of(normalFn)
-	checked := Checked(errorFn)
-	unchecked := Unchecked(errorFn)
+}
 
-	ret0 := function("ok", "k")
-	ret1, err := checked("error", " fail")
-	ret2 := unchecked("error", " fail")
+func TestFn(t *testing.T) {
+	fn := Of(func(t int, u string) (bool, error) {
+		return true, nil
+	})
 
-	a.Equal("okk", ret0)
-	a.Equal("", ret1)
-	a.Equal("error fail", err.Error())
-	a.Equal("", ret2)
+	r := fn.Fn(1, "test")
+	if r != true {
+		t.Errorf("TestFn failed")
+	}
+}
+
+func TestApply(t *testing.T) {
+	fn := Of(func(t int, u string) (bool, error) {
+		return true, nil
+	})
+
+	r := fn.Apply(1, "test")
+	if r != true {
+		t.Errorf("TestApply failed")
+	}
+}
+
+func TestCurry(t *testing.T) {
+	fn := Of(func(t int, u string) (bool, error) {
+		return true, nil
+	})
+
+	curriedFn := fn.Curry()(1)
+	r, err := curriedFn("test")
+	if r != true || err != nil {
+		t.Errorf("TestCurry failed")
+	}
+}
+
+func TestPartial(t *testing.T) {
+	fn := Of(func(t int, u string) (bool, error) {
+		return true, nil
+	})
+
+	partialFn := fn.Partial(1)
+	r, err := partialFn("test")
+	if r != true || err != nil {
+		t.Errorf("TestPartial failed")
+	}
 }

@@ -1,18 +1,22 @@
 package runnable
 
-type Runnable func()
-type CheckedRunnable func() error
+type Runnable func() error
 
-func Of(fn func()) Runnable {
+func Of(fn func() error) Runnable {
 	return fn
 }
 
-func Checked(fn func() error) CheckedRunnable {
-	return fn
-}
-
-func Unchecked(fn func() error) Runnable {
-	return func() {
-		_ = fn()
+func Cast(fn func()) Runnable {
+	return func() error {
+		fn()
+		return nil
 	}
+}
+
+func (fn Runnable) Fn() {
+	_ = fn()
+}
+
+func (fn Runnable) Run() {
+	fn.Fn()
 }
