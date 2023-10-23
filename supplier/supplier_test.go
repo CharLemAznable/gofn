@@ -1,6 +1,7 @@
 package supplier_test
 
 import (
+	"errors"
 	"github.com/CharLemAznable/gofn/supplier"
 	"testing"
 
@@ -81,6 +82,24 @@ func TestSupplier_Get(t *testing.T) {
 	s2 := supplier.Of(fn2)
 	result2 := s2.Get()
 	assert.Equal(t, "hello", result2)
+}
+
+func TestSupplierTo(t *testing.T) {
+	e := errors.New("error")
+
+	supplierFn := supplier.Of(func() (int, error) { return 42, nil })
+	consumerFn := func(t int) error { return nil }
+
+	fn := supplierFn.To(consumerFn)
+	err := fn()
+
+	assert.NoError(t, err)
+
+	supplierFn = supplier.Of(func() (int, error) { return 0, e })
+	fn = supplierFn.To(consumerFn)
+	err = fn()
+
+	assert.Equal(t, e, err)
 }
 
 func TestConstant(t *testing.T) {

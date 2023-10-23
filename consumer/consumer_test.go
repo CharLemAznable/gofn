@@ -1,7 +1,9 @@
 package consumer_test
 
 import (
+	"errors"
 	"github.com/CharLemAznable/gofn/consumer"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -52,4 +54,22 @@ func TestConsumerAccept(t *testing.T) {
 	c := consumer.Of(fn)
 
 	c.Accept(10)
+}
+
+func TestConsumerFrom(t *testing.T) {
+	e := errors.New("error")
+
+	supplierFn := func() (int, error) { return 42, nil }
+	consumerFn := consumer.Of(func(t int) error { return nil })
+
+	fn := consumerFn.From(supplierFn)
+	err := fn()
+
+	assert.NoError(t, err)
+
+	supplierFn = func() (int, error) { return 0, e }
+	fn = consumerFn.From(supplierFn)
+	err = fn()
+
+	assert.Equal(t, e, err)
 }

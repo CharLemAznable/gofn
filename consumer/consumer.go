@@ -1,5 +1,9 @@
 package consumer
 
+import (
+	"github.com/CharLemAznable/gofn/runnable"
+)
+
 type Consumer[T any] func(T) error
 
 func Of[T any](fn func(T) error) Consumer[T] {
@@ -19,4 +23,14 @@ func (fn Consumer[T]) Fn(t T) {
 
 func (fn Consumer[T]) Accept(t T) {
 	fn.Fn(t)
+}
+
+func (fn Consumer[T]) From(supplierFn func() (T, error)) runnable.Runnable {
+	return func() error {
+		t, err := supplierFn()
+		if err != nil {
+			return err
+		}
+		return fn(t)
+	}
 }
