@@ -6,69 +6,30 @@ import (
 )
 
 func TestOf(t *testing.T) {
-	fn := bifunction.Of(func(t int, u string) (bool, error) {
-		return true, nil
+	fn := bifunction.Of(func(a int, b string) (int, error) {
+		return a + len(b), nil
 	})
 
-	r, err := fn(1, "test")
-	if r != true || err != nil {
-		t.Errorf("TestOf failed")
+	result, err := fn(5, "hello")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	expected := 10
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
 	}
 }
 
 func TestCast(t *testing.T) {
-	fn := bifunction.Cast(func(t int, u string) bool {
-		return true
+	fn := bifunction.Cast(func(a int, b string) int {
+		return a + len(b)
 	})
 
-	r, err := fn(1, "test")
-	if r != true || err != nil {
-		t.Errorf("TestCast failed")
-	}
-}
+	result := fn.Apply(5, "hello")
 
-func TestFn(t *testing.T) {
-	fn := bifunction.Of(func(t int, u string) (bool, error) {
-		return true, nil
-	})
-
-	r := fn.Fn(1, "test")
-	if r != true {
-		t.Errorf("TestFn failed")
-	}
-}
-
-func TestApply(t *testing.T) {
-	fn := bifunction.Of(func(t int, u string) (bool, error) {
-		return true, nil
-	})
-
-	r := fn.Apply(1, "test")
-	if r != true {
-		t.Errorf("TestApply failed")
-	}
-}
-
-func TestCurry(t *testing.T) {
-	fn := bifunction.Of(func(t int, u string) (bool, error) {
-		return true, nil
-	})
-
-	curriedFn := fn.Curry()(1)
-	r, err := curriedFn("test")
-	if r != true || err != nil {
-		t.Errorf("TestCurry failed")
-	}
-}
-
-func TestPartial(t *testing.T) {
-	fn := bifunction.Of(func(t int, u string) (bool, error) {
-		return true, nil
-	})
-
-	partialFn := fn.Partial(1)
-	r, err := partialFn("test")
-	if r != true || err != nil {
-		t.Errorf("TestPartial failed")
+	expected := 10
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
 	}
 }

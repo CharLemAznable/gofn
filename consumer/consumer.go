@@ -1,7 +1,7 @@
 package consumer
 
 import (
-	"github.com/CharLemAznable/gofn/runnable"
+	"github.com/CharLemAznable/gofn/common"
 )
 
 type Consumer[T any] func(T) error
@@ -17,20 +17,20 @@ func Cast[T any](fn func(T)) Consumer[T] {
 	}
 }
 
-func (fn Consumer[T]) Fn(t T) {
+func (fn Consumer[T]) Accept(t T) {
 	_ = fn(t)
 }
 
-func (fn Consumer[T]) Accept(t T) {
-	fn.Fn(t)
-}
-
-func (fn Consumer[T]) From(supplierFn func() (T, error)) runnable.Runnable {
-	return func() error {
-		t, err := supplierFn()
-		if err != nil {
-			return err
-		}
-		return fn(t)
+func (fn Consumer[T]) Execute(ctx common.Context) {
+	t, err := common.Cast[T](ctx.Get())
+	if err != nil {
+		ctx.SetErr(err)
+		ctx.Set(nil)
+		return
+	}
+	err = fn(t)
+	ctx.SetErr(err)
+	if err != nil {
+		ctx.Set(nil)
 	}
 }

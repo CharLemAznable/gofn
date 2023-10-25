@@ -1,5 +1,9 @@
 package function
 
+import (
+	"github.com/CharLemAznable/gofn/common"
+)
+
 type Function[T any, R any] func(T) (R, error)
 
 func Of[T any, R any](fn func(T) (R, error)) Function[T, R] {
@@ -12,23 +16,19 @@ func Cast[T any, R any](fn func(T) R) Function[T, R] {
 	}
 }
 
-func (fn Function[T, R]) Fn(t T) R {
+func (fn Function[T, R]) Apply(t T) R {
 	r, _ := fn(t)
 	return r
 }
 
-func (fn Function[T, R]) Apply(t T) R {
-	return fn.Fn(t)
-}
-
-func Identity[T any]() Function[T, T] {
-	return Of(func(t T) (T, error) {
-		return t, nil
-	})
-}
-
-func YCombinator[T any](f func(func(T) T) func(T) T) func(T) T {
-	return func(t T) T {
-		return f(YCombinator(f))(t)
+func (fn Function[T, R]) Execute(ctx common.Context) {
+	t, err := common.Cast[T](ctx.Get())
+	if err != nil {
+		ctx.SetErr(err)
+		ctx.Set(nil)
+		return
 	}
+	r, err := fn(t)
+	ctx.SetErr(err)
+	ctx.Set(r)
 }

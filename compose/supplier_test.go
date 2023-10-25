@@ -17,11 +17,11 @@ func TestSupplyThenApply(t *testing.T) {
 		functionFn := func(input string) (string, error) {
 			return expectedResult, nil
 		}
-		errorFn := func() (string, error) {
-			return "", nil
-		}
+		//errorFn := func() (string, error) {
+		//	return "", nil
+		//}
 
-		resultFn := compose.SupplyThenApply(supplierFn, functionFn, errorFn)
+		resultFn := compose.SupplyThenApply(supplierFn, functionFn)
 		result, err := resultFn()
 
 		assert.NoError(t, err)
@@ -31,16 +31,16 @@ func TestSupplyThenApply(t *testing.T) {
 	t.Run("supplierFn returns error", func(t *testing.T) {
 		expectedError := errors.New("supplier error")
 		supplierFn := func() (string, error) {
-			return "", errors.New("ignored")
+			return "", expectedError
 		}
 		functionFn := func(input string) (string, error) {
 			return "", nil
 		}
-		errorFn := func() (string, error) {
-			return "", expectedError
-		}
+		//errorFn := func() (string, error) {
+		//	return "", expectedError
+		//}
 
-		resultFn := compose.SupplyThenApply(supplierFn, functionFn, errorFn)
+		resultFn := compose.SupplyThenApply(supplierFn, functionFn)
 		_, err := resultFn()
 
 		assert.Equal(t, expectedError, err)
@@ -54,32 +54,33 @@ func TestSupplyThenApply(t *testing.T) {
 		functionFn := func(input string) (string, error) {
 			return "", expectedError
 		}
-		errorFn := func() (string, error) {
-			return "", nil
-		}
+		//errorFn := func() (string, error) {
+		//	return "", nil
+		//}
 
-		resultFn := compose.SupplyThenApply(supplierFn, functionFn, errorFn)
+		resultFn := compose.SupplyThenApply(supplierFn, functionFn)
 		_, err := resultFn()
 
 		assert.Equal(t, expectedError, err)
 	})
 
 	t.Run("errorFn returns value", func(t *testing.T) {
-		expectedResult := "error result"
+		expectedError := errors.New("supplier error")
+		expectedResult := ""
 		supplierFn := func() (string, error) {
-			return "", errors.New("supplier error")
+			return "", expectedError
 		}
 		functionFn := func(input string) (string, error) {
 			return "", errors.New("function error")
 		}
-		errorFn := func() (string, error) {
-			return expectedResult, nil
-		}
+		//errorFn := func() (string, error) {
+		//	return expectedResult, nil
+		//}
 
-		resultFn := compose.SupplyThenApply(supplierFn, functionFn, errorFn)
+		resultFn := compose.SupplyThenApply(supplierFn, functionFn)
 		result, err := resultFn()
 
-		assert.NoError(t, err)
+		assert.Equal(t, expectedError, err)
 		assert.Equal(t, expectedResult, result)
 	})
 }

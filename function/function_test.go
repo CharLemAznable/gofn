@@ -1,90 +1,89 @@
 package function_test
 
 import (
+	"fmt"
+	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/function"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestOf(t *testing.T) {
-	fn := function.Of(func(t int) (int, error) {
+	// Test case 1: Test with a function that returns a string
+	fn := function.Of(func(t string) (string, error) {
+		return "Hello, " + t, nil
+	})
+
+	result, err := fn("World")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	expected := "Hello, World"
+	if result != expected {
+		t.Errorf("Expected %s, but got %s", expected, result)
+	}
+
+	// Test case 2: Test with a function that returns an integer
+	fn2 := function.Of(func(t int) (int, error) {
 		return t * 2, nil
 	})
 
-	result, err := fn(5)
-
-	assert.NoError(t, err)
-	assert.Equal(t, 10, result)
+	result2, err := fn2(5)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+	expectedInt := 10
+	if result2 != expectedInt {
+		t.Errorf("Expected %d, but got %d", expectedInt, result2)
+	}
 }
 
 func TestCast(t *testing.T) {
-	fn := function.Cast(func(t int) int {
-		return t * 2
+	// Test case 1: Test with a function that takes a string and returns an integer
+	fn := function.Cast(func(t string) int {
+		return len(t)
 	})
 
-	result, err := fn(5)
-
-	assert.NoError(t, err)
-	assert.Equal(t, 10, result)
-}
-
-func TestFn(t *testing.T) {
-	fn := function.Of(func(t int) (int, error) {
-		return t * 2, nil
-	})
-
-	result := fn.Fn(5)
-
-	assert.Equal(t, 10, result)
-}
-
-func TestApply(t *testing.T) {
-	fn := function.Of(func(t int) (int, error) {
-		return t * 2, nil
-	})
-
-	result := fn.Apply(5)
-
-	assert.Equal(t, 10, result)
-}
-
-func TestIdentity(t *testing.T) {
-	fn := function.Identity[int]()
-
-	result, err := fn(5)
-
-	assert.NoError(t, err)
-	assert.Equal(t, 5, result)
-}
-
-func TestYCombinator(t *testing.T) {
-	f1 := func(f func(int) int) func(int) int {
-		return func(n int) int {
-			if n <= 1 {
-				return 1
-			}
-			return n * f(n-1)
-		}
+	result := fn.Apply("Hello")
+	expected := 5
+	if result != expected {
+		t.Errorf("Expected %d, but got %d", expected, result)
 	}
 
-	fac := function.YCombinator(f1)
-
-	result := fac(5)
-
-	assert.Equal(t, 120, result)
-
-	f2 := func(f func(int) int) func(int) int {
-		return func(n int) int {
-			if n <= 2 {
-				return 1
-			}
-			return f(n-1) + f(n-2)
+	// Test case 2: Test with a function that takes an integer and returns a string
+	fn2 := function.Cast(func(t int) string {
+		if t%2 == 0 {
+			return "even"
 		}
+		return "odd"
+	})
+
+	resultStr := fn2.Apply(7)
+	expectedStr := "odd"
+	if resultStr != expectedStr {
+		t.Errorf("Expected %s, but got %s", expectedStr, resultStr)
 	}
+}
 
-	fib := function.YCombinator(f2)
+func TestExecute(t *testing.T) {
+	// 创建一个可执行对象
+	fn := function.Cast(func(str string) string {
+		return "[" + str + "]"
+	})
 
-	result2 := fib(10)
+	// 创建一个上下文对象
+	ctx := combinate.NewContext("ok")
+	// 调用 Execute 方法
+	fn.Execute(ctx)
+	// 验证结果是否符合预期
+	result, err := ctx.Get(), ctx.GetErr()
+	assert.Equal(t, "[ok]", result)
+	assert.NoError(t, err)
 
-	assert.Equal(t, 55, result2)
+	ctx = combinate.NewContext(0)
+	fn.Execute(ctx)
+	result, err = ctx.Get(), ctx.GetErr()
+	assert.Nil(t, result)
+	assert.Equal(t, fmt.Sprintf(
+		"%#v type mismatch %T", 0, ""), err.Error())
 }

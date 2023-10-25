@@ -12,11 +12,7 @@ func Cast[T any, U any](fn func(T, U) bool) BiPredicate[T, U] {
 	}
 }
 
-func (fn BiPredicate[T, U]) Fn(t T, u U) bool {
+func (fn BiPredicate[T, U]) Test(t T, u U) bool {
 	b, _ := fn(t, u)
 	return b
-}
-
-func (fn BiPredicate[T, U]) Test(t T, u U) bool {
-	return fn.Fn(t, u)
 }

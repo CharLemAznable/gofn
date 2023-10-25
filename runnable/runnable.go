@@ -1,5 +1,9 @@
 package runnable
 
+import (
+	"github.com/CharLemAznable/gofn/common"
+)
+
 type Runnable func() error
 
 func Of(fn func() error) Runnable {
@@ -13,19 +17,14 @@ func Cast(fn func()) Runnable {
 	}
 }
 
-func (fn Runnable) Fn() {
+func (fn Runnable) Run() {
 	_ = fn()
 }
 
-func (fn Runnable) Run() {
-	fn.Fn()
-}
-
-func (fn Runnable) Then(next Runnable) Runnable {
-	return func() error {
-		if err := fn(); err != nil {
-			return err
-		}
-		return next()
+func (fn Runnable) Execute(ctx common.Context) {
+	err := fn()
+	ctx.SetErr(err)
+	if err != nil {
+		ctx.Set(nil)
 	}
 }

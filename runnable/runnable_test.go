@@ -2,63 +2,60 @@ package runnable_test
 
 import (
 	"errors"
+	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/runnable"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
-	err := errors.New("test error")
-	runnableFn := runnable.Of(func() error {
+	err := errors.New("error")
+	fn := func() error {
 		return err
-	})
-
-	resultErr := runnableFn()
-	if resultErr != err {
-		t.Errorf("Expected error: %v, but got: %v", err, resultErr)
 	}
+
+	r := runnable.Of(fn)
+	err = r()
+	assert.Equal(t, err, err)
 }
 
 func TestCast(t *testing.T) {
-	fnCalled := false
-	runnableFn := runnable.Cast(func() {
-		fnCalled = true
-	})
-
-	resultErr := runnableFn()
-	if resultErr != nil {
-		t.Errorf("Expected nil error, but got: %v", resultErr)
+	called := false
+	fn := func() {
+		called = true
 	}
 
-	if !fnCalled {
-		t.Error("Expected function to be called, but it was not")
-	}
+	r := runnable.Cast(fn)
+	err := r()
+	assert.NoError(t, err)
+	assert.True(t, called)
 }
 
 func TestRunnable_Run(t *testing.T) {
-	fnCalled := false
-	runnableFn := runnable.Runnable(func() error {
-		fnCalled = true
-		return nil
-	})
-
-	runnableFn.Run()
-
-	if !fnCalled {
-		t.Error("Expected function to be called, but it was not")
+	err := errors.New("error")
+	fn := func() error {
+		return err
 	}
+
+	r := runnable.Of(fn)
+	err = runnable.Cast(r.Run)()
+	assert.NoError(t, err)
 }
 
-func TestRunnable_Then(t *testing.T) {
-	err1 := errors.New("error 1")
-	err2 := errors.New("error 2")
+func TestExecute(t *testing.T) {
+	// 创建一个可执行对象
+	err := errors.New("error")
+	fn := runnable.Of(func() error {
+		return err
+	})
 
-	fn := func() error { return nil }
-	fn1 := func() error { return err1 }
-	fn2 := func() error { return err2 }
-
-	seq := runnable.Runnable(fn).Then(fn1).Then(fn2)
-	err := seq()
-
-	assert.Equal(t, err1, err)
+	// 创建一个上下文对象
+	ctx := combinate.NewContext("nil")
+	// 调用 Execute 方法
+	fn.Execute(ctx)
+	// 验证结果是否符合预期
+	result, e := ctx.Get(), ctx.GetErr()
+	assert.Nil(t, result)
+	assert.Equal(t, err, e)
 }

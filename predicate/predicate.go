@@ -1,5 +1,9 @@
 package predicate
 
+import (
+	"github.com/CharLemAznable/gofn/common"
+)
+
 type Predicate[T any] func(T) (bool, error)
 
 func Of[T any](fn func(T) (bool, error)) Predicate[T] {
@@ -12,11 +16,22 @@ func Cast[T any](fn func(T) bool) Predicate[T] {
 	}
 }
 
-func (fn Predicate[T]) Fn(t T) bool {
+func (fn Predicate[T]) Test(t T) bool {
 	b, _ := fn(t)
 	return b
 }
 
-func (fn Predicate[T]) Test(t T) bool {
-	return fn.Fn(t)
+func (fn Predicate[T]) Execute(ctx common.Context) {
+	t, err := common.Cast[T](ctx.Get())
+	if err != nil {
+		ctx.SetErr(err)
+		ctx.Set(nil)
+		return
+	}
+	b, err := fn(t)
+	ctx.SetErr(err)
+	ctx.SetInterrupt(!b)
+	if !b {
+		ctx.Set(nil)
+	}
 }

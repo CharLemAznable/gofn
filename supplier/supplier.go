@@ -1,7 +1,7 @@
 package supplier
 
 import (
-	"github.com/CharLemAznable/gofn/runnable"
+	"github.com/CharLemAznable/gofn/common"
 )
 
 type Supplier[T any] func() (T, error)
@@ -16,27 +16,13 @@ func Cast[T any](fn func() T) Supplier[T] {
 	}
 }
 
-func (fn Supplier[T]) Fn() T {
+func (fn Supplier[T]) Get() T {
 	t, _ := fn()
 	return t
 }
 
-func (fn Supplier[T]) Get() T {
-	return fn.Fn()
-}
-
-func (fn Supplier[T]) To(consumerFn func(T) error) runnable.Runnable {
-	return func() error {
-		t, err := fn()
-		if err != nil {
-			return err
-		}
-		return consumerFn(t)
-	}
-}
-
-func Constant[T any](t T) Supplier[T] {
-	return func() (T, error) {
-		return t, nil
-	}
+func (fn Supplier[T]) Execute(ctx common.Context) {
+	t, err := fn()
+	ctx.SetErr(err)
+	ctx.Set(t)
 }

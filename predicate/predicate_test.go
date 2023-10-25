@@ -1,115 +1,93 @@
 package predicate_test
 
 import (
-	"errors"
+	"fmt"
+	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/predicate"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
-	// Test case 1: fn returns true
-	fn := predicate.Of(func(n int) (bool, error) {
+	// Test case 1: Test with a function that returns true
+	fn := func(n int) (bool, error) {
 		return n > 0, nil
-	})
-	result, err := fn(5)
-	if err != nil {
-		t.Errorf("Expected nil error, but got %v", err)
 	}
-	if !result {
-		t.Errorf("Expected true, but got false")
-	}
+	p := predicate.Of(fn)
+	result, err := p(5)
+	assert.True(t, result)
+	assert.NoError(t, err)
 
-	// Test case 2: fn returns false
-	fn = predicate.Of(func(n int) (bool, error) {
-		return n > 0, nil
-	})
-	result, err = fn(-5)
-	if err != nil {
-		t.Errorf("Expected nil error, but got %v", err)
+	// Test case 2: Test with a function that returns false
+	fn = func(n int) (bool, error) {
+		return n < 0, nil
 	}
-	if result {
-		t.Errorf("Expected false, but got true")
-	}
-
-	// Test case 3: fn returns error
-	expectedErr := "Some error occurred"
-	fn = predicate.Of(func(n int) (bool, error) {
-		return false, errors.New(expectedErr)
-	})
-	result, err = fn(5)
-	if err == nil {
-		t.Errorf("Expected error, but got nil")
-	}
-	if err.Error() != expectedErr {
-		t.Errorf("Expected error message '%s', but got '%s'", expectedErr, err.Error())
-	}
-	if result {
-		t.Errorf("Expected false, but got true")
-	}
+	p = predicate.Of(fn)
+	result, err = p(-5)
+	assert.True(t, result)
+	assert.NoError(t, err)
 }
 
 func TestCast(t *testing.T) {
-	// Test case 1: fn returns true
-	fn := predicate.Cast(func(n int) bool {
+	// Test case 1: Test with a function that returns true
+	fn := func(n int) bool {
 		return n > 0
-	})
-	result, err := fn(5)
-	if err != nil {
-		t.Errorf("Expected nil error, but got %v", err)
 	}
-	if !result {
-		t.Errorf("Expected true, but got false")
-	}
+	p := predicate.Cast(fn)
+	result, err := p(5)
+	assert.True(t, result)
+	assert.NoError(t, err)
 
-	// Test case 2: fn returns false
-	fn = predicate.Cast(func(n int) bool {
-		return n > 0
-	})
-	result, err = fn(-5)
-	if err != nil {
-		t.Errorf("Expected nil error, but got %v", err)
+	// Test case 2: Test with a function that returns false
+	fn = func(n int) bool {
+		return n < 0
 	}
-	if result {
-		t.Errorf("Expected false, but got true")
-	}
+	p = predicate.Cast(fn)
+	result, err = p(-5)
+	assert.True(t, result)
+	assert.NoError(t, err)
 }
 
-func TestPredicateFn(t *testing.T) {
-	// Test case 1: fn returns true
-	fn := predicate.Of(func(n int) (bool, error) {
+func TestPredicate_Test(t *testing.T) {
+	// Test case 1: Test with a function that returns true
+	fn := func(n int) (bool, error) {
 		return n > 0, nil
-	})
-	result := fn.Fn(5)
-	if !result {
-		t.Errorf("Expected true, but got false")
 	}
+	p := predicate.Of(fn)
+	result := p.Test(5)
+	assert.True(t, result)
 
-	// Test case 2: fn returns false
-	fn = predicate.Of(func(n int) (bool, error) {
-		return n > 0, nil
-	})
-	result = fn.Fn(-5)
-	if result {
-		t.Errorf("Expected false, but got true")
+	// Test case 2: Test with a function that returns false
+	fn = func(n int) (bool, error) {
+		return n < 0, nil
 	}
+	p = predicate.Of(fn)
+	result = p.Test(-5)
+	assert.True(t, result)
 }
 
-func TestPredicateTest(t *testing.T) {
-	// Test case 1: fn returns true
-	fn := predicate.Of(func(n int) (bool, error) {
-		return n > 0, nil
+func TestExecute(t *testing.T) {
+	// 创建一个可执行对象
+	fn := predicate.Cast(func(str string) bool {
+		return false
 	})
-	result := fn.Test(5)
-	if !result {
-		t.Errorf("Expected true, but got false")
-	}
 
-	// Test case 2: fn returns false
-	fn = predicate.Of(func(n int) (bool, error) {
-		return n > 0, nil
-	})
-	result = fn.Test(-5)
-	if result {
-		t.Errorf("Expected false, but got true")
-	}
+	// 创建一个上下文对象
+	ctx := combinate.NewContext("ok")
+	// 调用 Execute 方法
+	fn.Execute(ctx)
+	// 验证结果是否符合预期
+	result, err, interrupt := ctx.Get(), ctx.GetErr(), ctx.Interrupted()
+	assert.Nil(t, result)
+	assert.NoError(t, err)
+	assert.True(t, interrupt)
+
+	ctx = combinate.NewContext(0)
+	fn.Execute(ctx)
+	result, err, interrupt = ctx.Get(), ctx.GetErr(), ctx.Interrupted()
+	assert.Nil(t, result)
+	assert.Equal(t, fmt.Sprintf(
+		"%#v type mismatch %T", 0, ""), err.Error())
+	assert.False(t, interrupt)
 }

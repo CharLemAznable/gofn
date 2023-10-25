@@ -1,55 +1,42 @@
 package biconsumer_test
 
 import (
+	"errors"
 	"github.com/CharLemAznable/gofn/biconsumer"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
-	fn := func(t int, u string) error {
-		// test implementation
+	fn := func(i int, s string) error {
 		return nil
 	}
 
-	bc := biconsumer.Of(fn)
+	con := biconsumer.Of(fn)
+	err := con(10, "test")
 
-	err := bc(10, "test")
-	if err != nil {
-		t.Errorf("Expected nil, got %v", err)
-	}
+	assert.NoError(t, err)
 }
 
 func TestCast(t *testing.T) {
-	fn := func(t int, u string) {
-		// test implementation
+	fn := func(i int, s string) {
+		// do something
 	}
 
-	bc := biconsumer.Cast(fn)
+	con := biconsumer.Cast(fn)
+	err := con(10, "test")
 
-	err := bc(10, "test")
-	if err != nil {
-		t.Errorf("Expected nil, got %v", err)
-	}
+	assert.NoError(t, err)
 }
 
-func TestFn(t *testing.T) {
-	fn := func(t int, u string) error {
-		// test implementation
-		return nil
+func TestBiConsumer_Accept(t *testing.T) {
+	fn := func(i int, s string) error {
+		return errors.New("error")
 	}
 
-	bc := biconsumer.Of(fn)
+	con := biconsumer.Of(fn)
+	err := biconsumer.Cast(con.Accept)(10, "test")
 
-	bc.Fn(10, "test")
-}
-
-func TestAccept(t *testing.T) {
-	fn := func(t int, u string) error {
-		// test implementation
-		return nil
-	}
-
-	bc := biconsumer.Of(fn)
-
-	bc.Accept(10, "test")
+	assert.NoError(t, err)
 }
