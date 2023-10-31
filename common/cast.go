@@ -22,3 +22,12 @@ func CastOrZero[T any](val interface{}) (T, error) {
 		return t, err
 	}
 }
+
+func CastQuietly[T any](val interface{}) T {
+	t, _ := val.(T)
+	return t
+}
+
+func Zero[T any]() T {
+	return CastQuietly[T](nil)
+}

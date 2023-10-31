@@ -16,6 +16,10 @@ func TestCast(t *testing.T) {
 		if result != val {
 			t.Errorf("Expected result to be %s, but got %s", val, result)
 		}
+		result = common.CastQuietly[string](val)
+		if result != val {
+			t.Errorf("Expected result to be %s, but got %s", val, result)
+		}
 	})
 
 	t.Run("Test with invalid type", func(t *testing.T) {
@@ -28,6 +32,10 @@ func TestCast(t *testing.T) {
 		if err.Error() != expectedErr {
 			t.Errorf("Expected error message to be %s, but got %s", expectedErr, err.Error())
 		}
+		result := common.CastQuietly[string](val)
+		if result != "" {
+			t.Errorf("Expected result to be %s, but got %s", "", result)
+		}
 	})
 
 	t.Run("Test with nil value", func(t *testing.T) {
@@ -36,6 +44,10 @@ func TestCast(t *testing.T) {
 		if err != nil {
 			t.Errorf("Expected no error, but got: %v", err)
 		}
+		if result != "" {
+			t.Errorf("Expected result to be %s, but got %s", "", result)
+		}
+		result = common.Zero[string]()
 		if result != "" {
 			t.Errorf("Expected result to be %s, but got %s", "", result)
 		}
