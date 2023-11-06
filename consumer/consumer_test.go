@@ -6,8 +6,6 @@ import (
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/consumer"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -18,7 +16,9 @@ func TestOf(t *testing.T) {
 	con := consumer.Of(fn)
 	err := con(10)
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
 }
 
 func TestCast(t *testing.T) {
@@ -29,7 +29,9 @@ func TestCast(t *testing.T) {
 	con := consumer.Cast(fn)
 	err := con(10)
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
 }
 
 func TestConsumer_Accept(t *testing.T) {
@@ -40,7 +42,9 @@ func TestConsumer_Accept(t *testing.T) {
 	con := consumer.Of(fn)
 	err := consumer.Cast(con.Accept)(10)
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
 }
 
 func TestExecute(t *testing.T) {
@@ -55,13 +59,21 @@ func TestExecute(t *testing.T) {
 	fn.Execute(ctx)
 	// 验证结果是否符合预期
 	result, err := ctx.Get(), ctx.GetErr()
-	assert.Nil(t, result)
-	assert.Equal(t, "error", err.Error())
+	if result != nil {
+		t.Errorf("Expected nil, but got: %v", result)
+	}
+	if err.Error() != "error" {
+		t.Errorf("Expected 'error', but got: %v", err.Error())
+	}
 
 	ctx = combinate.NewContext(0)
 	fn.Execute(ctx)
 	result, err = ctx.Get(), ctx.GetErr()
-	assert.Nil(t, result)
-	assert.Equal(t, fmt.Sprintf(
-		"%#v type mismatch %T", 0, ""), err.Error())
+	if result != nil {
+		t.Errorf("Expected nil, but got: %v", result)
+	}
+	expectedErr := fmt.Sprintf("%#v type mismatch %T", 0, "")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected '%s', but got: %v", expectedErr, err.Error())
+	}
 }

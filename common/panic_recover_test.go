@@ -3,7 +3,6 @@ package common_test
 import (
 	"errors"
 	"github.com/CharLemAznable/gofn/common"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -23,7 +22,9 @@ func TestPanicRecover(t *testing.T) {
 	case v := <-panicked.Caught():
 		actualError = common.WrapPanic(v)
 	}
-	assert.Equal(t, "error", actualError.Error())
+	if actualError.Error() != "error" {
+		t.Errorf("Expected error message 'error', but got '%s'", actualError.Error())
+	}
 
 	go func() {
 		defer panicked.Recover()
@@ -37,6 +38,10 @@ func TestPanicRecover(t *testing.T) {
 		actualError = common.WrapPanic(v)
 	}
 	panicError, ok := (actualError).(*common.PanicError)
-	assert.True(t, ok)
-	assert.Equal(t, "panicked with panicked", panicError.Error())
+	if !ok {
+		t.Errorf("Expected error is common.PanicError, but got %T", actualError)
+	}
+	if panicError.Error() != "panicked with panicked" {
+		t.Errorf("Expected error message 'panicked with panicked', but got '%s'", panicError.Error())
+	}
 }

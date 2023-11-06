@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/function"
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -77,13 +76,21 @@ func TestExecute(t *testing.T) {
 	fn.Execute(ctx)
 	// 验证结果是否符合预期
 	result, err := ctx.Get(), ctx.GetErr()
-	assert.Equal(t, "[ok]", result)
-	assert.NoError(t, err)
+	if result != "[ok]" {
+		t.Errorf("Expected '[ok]', but got: %v", result)
+	}
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
 
 	ctx = combinate.NewContext(0)
 	fn.Execute(ctx)
 	result, err = ctx.Get(), ctx.GetErr()
-	assert.Nil(t, result)
-	assert.Equal(t, fmt.Sprintf(
-		"%#v type mismatch %T", 0, ""), err.Error())
+	if result != nil {
+		t.Errorf("Expected nil, but got: %v", result)
+	}
+	expectedErr := fmt.Sprintf("%#v type mismatch %T", 0, "")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected '%s', but got: %v", expectedErr, err.Error())
+	}
 }

@@ -4,8 +4,6 @@ import (
 	"errors"
 	"github.com/CharLemAznable/gofn/biconsumer"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -16,7 +14,9 @@ func TestOf(t *testing.T) {
 	con := biconsumer.Of(fn)
 	err := con(10, "test")
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }
 
 func TestCast(t *testing.T) {
@@ -27,7 +27,9 @@ func TestCast(t *testing.T) {
 	con := biconsumer.Cast(fn)
 	err := con(10, "test")
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }
 
 func TestBiConsumer_Accept(t *testing.T) {
@@ -38,5 +40,7 @@ func TestBiConsumer_Accept(t *testing.T) {
 	con := biconsumer.Of(fn)
 	err := biconsumer.Cast(con.Accept)(10, "test")
 
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }

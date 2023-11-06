@@ -5,8 +5,6 @@ import (
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/predicate"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -16,8 +14,12 @@ func TestOf(t *testing.T) {
 	}
 	p := predicate.Of(fn)
 	result, err := p(5)
-	assert.True(t, result)
-	assert.NoError(t, err)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 
 	// Test case 2: Test with a function that returns false
 	fn = func(n int) (bool, error) {
@@ -25,8 +27,12 @@ func TestOf(t *testing.T) {
 	}
 	p = predicate.Of(fn)
 	result, err = p(-5)
-	assert.True(t, result)
-	assert.NoError(t, err)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }
 
 func TestCast(t *testing.T) {
@@ -36,8 +42,12 @@ func TestCast(t *testing.T) {
 	}
 	p := predicate.Cast(fn)
 	result, err := p(5)
-	assert.True(t, result)
-	assert.NoError(t, err)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 
 	// Test case 2: Test with a function that returns false
 	fn = func(n int) bool {
@@ -45,8 +55,12 @@ func TestCast(t *testing.T) {
 	}
 	p = predicate.Cast(fn)
 	result, err = p(-5)
-	assert.True(t, result)
-	assert.NoError(t, err)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 }
 
 func TestPredicate_Test(t *testing.T) {
@@ -56,7 +70,9 @@ func TestPredicate_Test(t *testing.T) {
 	}
 	p := predicate.Of(fn)
 	result := p.Test(5)
-	assert.True(t, result)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
 
 	// Test case 2: Test with a function that returns false
 	fn = func(n int) (bool, error) {
@@ -64,7 +80,9 @@ func TestPredicate_Test(t *testing.T) {
 	}
 	p = predicate.Of(fn)
 	result = p.Test(-5)
-	assert.True(t, result)
+	if !result {
+		t.Errorf("Expected true, but got false")
+	}
 }
 
 func TestExecute(t *testing.T) {
@@ -79,15 +97,27 @@ func TestExecute(t *testing.T) {
 	fn.Execute(ctx)
 	// 验证结果是否符合预期
 	result, err, interrupt := ctx.Get(), ctx.GetErr(), ctx.Interrupted()
-	assert.Nil(t, result)
-	assert.NoError(t, err)
-	assert.True(t, interrupt)
+	if result != nil {
+		t.Errorf("Expected nil, but got: %v", result)
+	}
+	if err != nil {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+	if !interrupt {
+		t.Errorf("Expected true, but got false")
+	}
 
 	ctx = combinate.NewContext(0)
 	fn.Execute(ctx)
 	result, err, interrupt = ctx.Get(), ctx.GetErr(), ctx.Interrupted()
-	assert.Nil(t, result)
-	assert.Equal(t, fmt.Sprintf(
-		"%#v type mismatch %T", 0, ""), err.Error())
-	assert.False(t, interrupt)
+	if result != nil {
+		t.Errorf("Expected nil, but got: %v", result)
+	}
+	expectedErr := fmt.Sprintf("%#v type mismatch %T", 0, "")
+	if err.Error() != expectedErr {
+		t.Errorf("Expected '%s', but got: %v", expectedErr, err.Error())
+	}
+	if interrupt {
+		t.Errorf("Expected false, but got true")
+	}
 }

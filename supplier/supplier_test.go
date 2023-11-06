@@ -5,8 +5,6 @@ import (
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/supplier"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -16,8 +14,12 @@ func TestOf(t *testing.T) {
 	}
 	s := supplier.Of(fn)
 	result, err := s()
-	assert.NoError(t, err)
-	assert.Equal(t, 10, result)
+	if err != nil {
+		t.Error("Expected no error, but got:", err)
+	}
+	if result != 10 {
+		t.Error("Expected 10, but got:", result)
+	}
 
 	// Test case 2
 	fn = func() (int, error) {
@@ -25,8 +27,12 @@ func TestOf(t *testing.T) {
 	}
 	s = supplier.Of(fn)
 	result, err = s()
-	assert.NoError(t, err)
-	assert.Equal(t, 0, result)
+	if err != nil {
+		t.Error("Expected no error, but got:", err)
+	}
+	if result != 0 {
+		t.Error("Expected 0, but got:", result)
+	}
 
 	// Test case 3
 	fn = func() (int, error) {
@@ -34,8 +40,13 @@ func TestOf(t *testing.T) {
 	}
 	s = supplier.Of(fn)
 	result, err = s()
-	assert.Error(t, err)
-	assert.Zero(t, result)
+	if err == nil {
+		t.Error("Expected error, but got no error")
+	}
+	if result != 0 {
+		t.Error("Expected 0, but got:", result)
+	}
+
 }
 
 func TestCast(t *testing.T) {
@@ -45,8 +56,12 @@ func TestCast(t *testing.T) {
 	}
 	s := supplier.Cast(fn)
 	result, err := s()
-	assert.NoError(t, err)
-	assert.Equal(t, 10, result)
+	if err != nil {
+		t.Error("Expected no error, but got:", err)
+	}
+	if result != 10 {
+		t.Error("Expected 10, but got:", result)
+	}
 
 	// Test case 2
 	fn = func() int {
@@ -54,8 +69,12 @@ func TestCast(t *testing.T) {
 	}
 	s = supplier.Cast(fn)
 	result, err = s()
-	assert.NoError(t, err)
-	assert.Equal(t, 0, result)
+	if err != nil {
+		t.Error("Expected no error, but got:", err)
+	}
+	if result != 0 {
+		t.Error("Expected 0, but got:", result)
+	}
 }
 
 func TestSupplier_Get(t *testing.T) {
@@ -65,7 +84,9 @@ func TestSupplier_Get(t *testing.T) {
 	}
 	s := supplier.Of(fn)
 	result := s.Get()
-	assert.Equal(t, 10, result)
+	if result != 10 {
+		t.Error("Expected 10, but got:", result)
+	}
 
 	// Test case 2
 	fn = func() (int, error) {
@@ -73,7 +94,9 @@ func TestSupplier_Get(t *testing.T) {
 	}
 	s = supplier.Of(fn)
 	result = s.Get()
-	assert.Equal(t, 0, result)
+	if result != 0 {
+		t.Error("Expected 0, but got:", result)
+	}
 
 	// Test case 3
 	fn = func() (int, error) {
@@ -81,7 +104,9 @@ func TestSupplier_Get(t *testing.T) {
 	}
 	s = supplier.Of(fn)
 	result = s.Get()
-	assert.Zero(t, result)
+	if result != 0 {
+		t.Error("Expected 0, but got:", result)
+	}
 }
 
 func TestExecute(t *testing.T) {
@@ -97,6 +122,10 @@ func TestExecute(t *testing.T) {
 	fn.Execute(ctx)
 	// 验证结果是否符合预期
 	result, e := ctx.Get(), ctx.GetErr()
-	assert.Equal(t, "notOk", result)
-	assert.Equal(t, err, e)
+	if result != "notOk" {
+		t.Error("Expected 'notOk', but got:", result)
+	}
+	if e != err {
+		t.Error("Expected error, but got:", e)
+	}
 }

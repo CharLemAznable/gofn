@@ -10,25 +10,29 @@ import (
 	"github.com/CharLemAznable/gofn/supplier"
 	"strconv"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestRunnable(t *testing.T) {
 	combinator := combinate.NewCombinator()
 	fn := combinate.Runnable(combinator)
 	err := fn()
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 
 	combinator.Append(runnable.Cast(func() {}))
 	err = fn()
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
 
 	combinator.Append(runnable.Of(func() error {
 		return errors.New("error")
 	}))
 	err = fn()
-	assert.Error(t, err)
+	if err == nil {
+		t.Errorf("Expected error, but got nil")
+	}
 }
 
 func TestSupplier(t *testing.T) {
@@ -37,14 +41,18 @@ func TestSupplier(t *testing.T) {
 	}))
 	fn := combinate.Supplier[int](combinator)
 	i := fn.Get()
-	assert.Equal(t, 10, i)
+	if i != 10 {
+		t.Errorf("Expected 10, but got %d", i)
+	}
 
 	combinator.Append(supplier.Cast(func() string {
 		return "ok"
 	}))
 	fn2 := combinate.Supplier[string](combinator)
 	s := fn2.Get()
-	assert.Equal(t, "ok", s)
+	if s != "ok" {
+		t.Errorf("Expected 'ok', but got '%s'", s)
+	}
 }
 
 func TestConsumer(t *testing.T) {
@@ -59,10 +67,14 @@ func TestConsumer(t *testing.T) {
 	fn := combinate.Consumer[int](combinator)
 
 	err := fn(10)
-	assert.Equal(t, "even", err.Error())
+	if err.Error() != "even" {
+		t.Errorf("Expected 'even', but got '%s'", err.Error())
+	}
 
 	err = fn(5)
-	assert.Equal(t, "odd", err.Error())
+	if err.Error() != "odd" {
+		t.Errorf("Expected 'odd', but got '%s'", err.Error())
+	}
 }
 
 func TestFunction(t *testing.T) {
@@ -80,11 +92,17 @@ func TestFunction(t *testing.T) {
 	fn := combinate.Function[int, string](combinator)
 
 	str := fn.Apply(10)
-	assert.Equal(t, "even", str)
+	if str != "even" {
+		t.Errorf("Expected 'even', but got '%s'", str)
+	}
 
 	str, err := fn(5)
-	assert.Equal(t, "", str)
-	assert.Equal(t, "odd", err.Error())
+	if str != "" {
+		t.Errorf("Expected '', but got '%s'", str)
+	}
+	if err.Error() != "odd" {
+		t.Errorf("Expected 'odd', but got '%s'", err.Error())
+	}
 }
 
 func TestPredicate(t *testing.T) {
@@ -95,8 +113,12 @@ func TestPredicate(t *testing.T) {
 	fn := combinate.Predicate[string](combinator)
 
 	b := fn.Test("10")
-	assert.True(t, b)
+	if !b {
+		t.Errorf("Expected true, but got false")
+	}
 
 	b = fn.Test("5")
-	assert.False(t, b)
+	if b {
+		t.Errorf("Expected false, but got true")
+	}
 }

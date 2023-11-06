@@ -5,8 +5,6 @@ import (
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/runnable"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -16,8 +14,10 @@ func TestOf(t *testing.T) {
 	}
 
 	r := runnable.Of(fn)
-	err = r()
-	assert.Equal(t, err, err)
+	e := r()
+	if err != e {
+		t.Errorf("Expected error '%v', but got '%v'", err, e)
+	}
 }
 
 func TestCast(t *testing.T) {
@@ -28,8 +28,12 @@ func TestCast(t *testing.T) {
 
 	r := runnable.Cast(fn)
 	err := r()
-	assert.NoError(t, err)
-	assert.True(t, called)
+	if err != nil {
+		t.Errorf("Expected error is nil, but got '%v'", err)
+	}
+	if !called {
+		t.Error("Expected called, but not called")
+	}
 }
 
 func TestRunnable_Run(t *testing.T) {
@@ -40,7 +44,9 @@ func TestRunnable_Run(t *testing.T) {
 
 	r := runnable.Of(fn)
 	err = runnable.Cast(r.Run)()
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("Expected error is nil, but got '%v'", err)
+	}
 }
 
 func TestExecute(t *testing.T) {
@@ -56,6 +62,10 @@ func TestExecute(t *testing.T) {
 	fn.Execute(ctx)
 	// 验证结果是否符合预期
 	result, e := ctx.Get(), ctx.GetErr()
-	assert.Nil(t, result)
-	assert.Equal(t, err, e)
+	if result != nil {
+		t.Errorf("Expected result is nil, but got '%v'", result)
+	}
+	if err != e {
+		t.Errorf("Expected error '%v', but got '%v'", err, e)
+	}
 }
