@@ -1,6 +1,7 @@
 package bifunction_test
 
 import (
+	"errors"
 	"github.com/CharLemAznable/gofn/bifunction"
 	"testing"
 )
@@ -19,6 +20,25 @@ func TestOf(t *testing.T) {
 	if result != expected {
 		t.Errorf("Expected %d, but got %d", expected, result)
 	}
+
+	fn = bifunction.Of(func(a int, b string) (int, error) {
+		return a + len(b), errors.New("error")
+	})
+	func() {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				t.Error("Expected recover error, but got nil")
+			}
+			recErr, ok := rec.(error)
+			if !ok {
+				t.Errorf("Expected recover error, but got %v", rec)
+			} else if recErr.Error() != "error" {
+				t.Errorf("Expected error message 'error', but got '%s'", recErr.Error())
+			}
+		}()
+		fn.MustApply(5, "hello")
+	}()
 }
 
 func TestCast(t *testing.T) {

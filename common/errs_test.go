@@ -31,3 +31,29 @@ func TestDefaultErrorMsg(t *testing.T) {
 		t.Errorf("Expected error message 'original error', but got '%s'", err3.Error())
 	}
 }
+
+func TestPanicIfError(t *testing.T) {
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Errorf("Expected no panic, but got %v", r)
+			}
+		}()
+		common.PanicIfError(nil)
+	}()
+	func() {
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Error("Expected panic, but got nothing")
+			}
+			err, ok := r.(error)
+			if !ok {
+				t.Errorf("Expected panic error, but got %v", r)
+			} else if err.Error() != "panic error" {
+				t.Errorf("Expected error message 'panic error', but got '%s'", err.Error())
+			}
+		}()
+		common.PanicIfError(errors.New("panic error"))
+	}()
+}

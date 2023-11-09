@@ -1,6 +1,7 @@
 package predicate_test
 
 import (
+	"errors"
 	"fmt"
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/predicate"
@@ -83,6 +84,26 @@ func TestPredicate_Test(t *testing.T) {
 	if !result {
 		t.Errorf("Expected true, but got false")
 	}
+
+	// Test case 3: Test with a function that returns with error
+	fn = func(n int) (bool, error) {
+		return false, errors.New("error")
+	}
+	func() {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				t.Error("Expected recover error, but got nil")
+			}
+			recErr, ok := rec.(error)
+			if !ok {
+				t.Errorf("Expected recover error, but got %v", rec)
+			} else if recErr.Error() != "error" {
+				t.Errorf("Expected error message 'error', but got '%s'", recErr.Error())
+			}
+		}()
+		predicate.Of(fn).MustTest(0)
+	}()
 }
 
 func TestExecute(t *testing.T) {

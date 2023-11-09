@@ -37,16 +37,31 @@ func TestCast(t *testing.T) {
 }
 
 func TestRunnable_Run(t *testing.T) {
-	err := errors.New("error")
 	fn := func() error {
-		return err
+		return errors.New("error")
 	}
 
 	r := runnable.Of(fn)
-	err = runnable.Cast(r.Run)()
+	err := runnable.Cast(r.Run)()
 	if err != nil {
 		t.Errorf("Expected error is nil, but got '%v'", err)
 	}
+
+	func() {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				t.Error("Expected recover error, but got nil")
+			}
+			recErr, ok := rec.(error)
+			if !ok {
+				t.Errorf("Expected recover error, but got %v", rec)
+			} else if recErr.Error() != "error" {
+				t.Errorf("Expected error message 'error', but got '%s'", recErr.Error())
+			}
+		}()
+		r.MustRun()
+	}()
 }
 
 func TestExecute(t *testing.T) {

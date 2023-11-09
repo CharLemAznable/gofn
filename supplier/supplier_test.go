@@ -107,6 +107,23 @@ func TestSupplier_Get(t *testing.T) {
 	if result != 0 {
 		t.Error("Expected 0, but got:", result)
 	}
+
+	// Test case 4
+	func() {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				t.Error("Expected recover error, but got nil")
+			}
+			recErr, ok := rec.(error)
+			if !ok {
+				t.Errorf("Expected recover error, but got %v", rec)
+			} else if recErr.Error() != "error" {
+				t.Errorf("Expected error message 'error', but got '%s'", recErr.Error())
+			}
+		}()
+		s.MustGet()
+	}()
 }
 
 func TestExecute(t *testing.T) {

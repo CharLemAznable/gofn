@@ -21,6 +21,12 @@ func (fn Function[T, R]) Apply(t T) R {
 	return r
 }
 
+func (fn Function[T, R]) MustApply(t T) R {
+	r, err := fn(t)
+	common.PanicIfError(err)
+	return r
+}
+
 func (fn Function[T, R]) Execute(ctx common.Context) {
 	t, err := common.Cast[T](ctx.Get())
 	if err != nil {

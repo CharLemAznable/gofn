@@ -14,3 +14,9 @@ func DefaultErrorMsg(err error, defMsg string) error {
 		return errors.New(defMsg)
 	})
 }
+
+func PanicIfError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}

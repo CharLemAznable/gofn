@@ -21,6 +21,12 @@ func (fn Predicate[T]) Test(t T) bool {
 	return b
 }
 
+func (fn Predicate[T]) MustTest(t T) bool {
+	b, err := fn(t)
+	common.PanicIfError(err)
+	return b
+}
+
 func (fn Predicate[T]) Execute(ctx common.Context) {
 	t, err := common.Cast[T](ctx.Get())
 	if err != nil {

@@ -1,6 +1,7 @@
 package function_test
 
 import (
+	"errors"
 	"fmt"
 	"github.com/CharLemAznable/gofn/combinate"
 	"github.com/CharLemAznable/gofn/function"
@@ -35,6 +36,27 @@ func TestOf(t *testing.T) {
 	if result2 != expectedInt {
 		t.Errorf("Expected %d, but got %d", expectedInt, result2)
 	}
+
+	// Test case 3: Test with a function that returns with error
+	fn3 := function.Of(func(s string) (int, error) {
+		return 0, errors.New("error")
+	})
+
+	func() {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				t.Error("Expected recover error, but got nil")
+			}
+			recErr, ok := rec.(error)
+			if !ok {
+				t.Errorf("Expected recover error, but got %v", rec)
+			} else if recErr.Error() != "error" {
+				t.Errorf("Expected error message 'error', but got '%s'", recErr.Error())
+			}
+		}()
+		fn3.MustApply("test")
+	}()
 }
 
 func TestCast(t *testing.T) {

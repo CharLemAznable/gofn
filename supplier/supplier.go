@@ -21,6 +21,12 @@ func (fn Supplier[T]) Get() T {
 	return t
 }
 
+func (fn Supplier[T]) MustGet() T {
+	t, err := fn()
+	common.PanicIfError(err)
+	return t
+}
+
 func (fn Supplier[T]) Execute(ctx common.Context) {
 	t, err := fn()
 	ctx.SetErr(err)

@@ -21,6 +21,10 @@ func (fn Runnable) Run() {
 	_ = fn()
 }
 
+func (fn Runnable) MustRun() {
+	common.PanicIfError(fn())
+}
+
 func (fn Runnable) Execute(ctx common.Context) {
 	err := fn()
 	ctx.SetErr(err)

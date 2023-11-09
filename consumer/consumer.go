@@ -21,6 +21,10 @@ func (fn Consumer[T]) Accept(t T) {
 	_ = fn(t)
 }
 
+func (fn Consumer[T]) MustAccept(t T) {
+	common.PanicIfError(fn(t))
+}
+
 func (fn Consumer[T]) Execute(ctx common.Context) {
 	t, err := common.Cast[T](ctx.Get())
 	if err != nil {
