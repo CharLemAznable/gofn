@@ -16,6 +16,10 @@ func Cast[T any](fn func() T) Supplier[T] {
 	}
 }
 
+func (fn Supplier[T]) Fn() (T, error) {
+	return fn()
+}
+
 func (fn Supplier[T]) Get() T {
 	t, _ := fn()
 	return t

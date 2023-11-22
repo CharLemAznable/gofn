@@ -38,7 +38,7 @@ func TestBiConsumer_Accept(t *testing.T) {
 	}
 
 	con := biconsumer.Of(fn)
-	err := biconsumer.Cast(con.Accept)(10, "test")
+	err := biconsumer.Cast(con.Accept).Fn(10, "test")
 
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)

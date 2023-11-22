@@ -40,7 +40,7 @@ func TestConsumer_Accept(t *testing.T) {
 	}
 
 	con := consumer.Of(fn)
-	err := consumer.Cast(con.Accept)(10)
+	err := consumer.Cast(con.Accept).Fn(10)
 
 	if err != nil {
 		t.Errorf("Expected no error, but got: %v", err)

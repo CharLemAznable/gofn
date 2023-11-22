@@ -14,7 +14,7 @@ func TestOf(t *testing.T) {
 
 	predicate := bipredicate.Of(fn)
 
-	result, err := predicate(10, "test")
+	result, err := predicate.Fn(10, "test")
 	if err != nil {
 		t.Errorf("Expected no error, but got %v", err)
 	}

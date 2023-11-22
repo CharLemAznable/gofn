@@ -16,6 +16,10 @@ func Cast[T any](fn func(T) bool) Predicate[T] {
 	}
 }
 
+func (fn Predicate[T]) Fn(t T) (bool, error) {
+	return fn(t)
+}
+
 func (fn Predicate[T]) Test(t T) bool {
 	b, _ := fn(t)
 	return b

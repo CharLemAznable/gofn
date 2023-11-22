@@ -17,6 +17,10 @@ func Cast[T any](fn func(T)) Consumer[T] {
 	}
 }
 
+func (fn Consumer[T]) Fn(t T) error {
+	return fn(t)
+}
+
 func (fn Consumer[T]) Accept(t T) {
 	_ = fn(t)
 }

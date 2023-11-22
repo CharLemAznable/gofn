@@ -11,7 +11,7 @@ func TestOf(t *testing.T) {
 		return a + len(b), nil
 	})
 
-	result, err := fn(5, "hello")
+	result, err := fn.Fn(5, "hello")
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}

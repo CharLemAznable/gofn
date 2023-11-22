@@ -42,7 +42,7 @@ func TestRunnable_Run(t *testing.T) {
 	}
 
 	r := runnable.Of(fn)
-	err := runnable.Cast(r.Run)()
+	err := runnable.Cast(r.Run).Fn()
 	if err != nil {
 		t.Errorf("Expected error is nil, but got '%v'", err)
 	}

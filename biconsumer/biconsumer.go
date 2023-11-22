@@ -15,6 +15,10 @@ func Cast[T any, U any](fn func(T, U)) BiConsumer[T, U] {
 	}
 }
 
+func (fn BiConsumer[T, U]) Fn(t T, u U) error {
+	return fn(t, u)
+}
+
 func (fn BiConsumer[T, U]) Accept(t T, u U) {
 	_ = fn(t, u)
 }

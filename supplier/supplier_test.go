@@ -39,7 +39,7 @@ func TestOf(t *testing.T) {
 		return 0, errors.New("error")
 	}
 	s = supplier.Of(fn)
-	result, err = s()
+	result, err = s.Fn()
 	if err == nil {
 		t.Error("Expected error, but got no error")
 	}
@@ -68,7 +68,7 @@ func TestCast(t *testing.T) {
 		return 0
 	}
 	s = supplier.Cast(fn)
-	result, err = s()
+	result, err = s.Fn()
 	if err != nil {
 		t.Error("Expected no error, but got:", err)
 	}

@@ -14,6 +14,10 @@ func Cast[T any, U any, R any](fn func(T, U) R) BiFunction[T, U, R] {
 	}
 }
 
+func (fn BiFunction[T, U, R]) Fn(t T, u U) (R, error) {
+	return fn(t, u)
+}
+
 func (fn BiFunction[T, U, R]) Apply(t T, u U) R {
 	r, _ := fn(t, u)
 	return r

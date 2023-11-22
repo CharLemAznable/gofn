@@ -17,6 +17,10 @@ func Cast(fn func()) Runnable {
 	}
 }
 
+func (fn Runnable) Fn() error {
+	return fn()
+}
+
 func (fn Runnable) Run() {
 	_ = fn()
 }

@@ -27,7 +27,7 @@ func TestOf(t *testing.T) {
 		return n < 0, nil
 	}
 	p = predicate.Of(fn)
-	result, err = p(-5)
+	result, err = p.Fn(-5)
 	if !result {
 		t.Errorf("Expected true, but got false")
 	}
@@ -55,7 +55,7 @@ func TestCast(t *testing.T) {
 		return n < 0
 	}
 	p = predicate.Cast(fn)
-	result, err = p(-5)
+	result, err = p.Fn(-5)
 	if !result {
 		t.Errorf("Expected true, but got false")
 	}

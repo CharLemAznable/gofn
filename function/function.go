@@ -16,6 +16,10 @@ func Cast[T any, R any](fn func(T) R) Function[T, R] {
 	}
 }
 
+func (fn Function[T, R]) Fn(t T) (R, error) {
+	return fn(t)
+}
+
 func (fn Function[T, R]) Apply(t T) R {
 	r, _ := fn(t)
 	return r

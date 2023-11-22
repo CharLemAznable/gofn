@@ -28,7 +28,7 @@ func TestOf(t *testing.T) {
 		return t * 2, nil
 	})
 
-	result2, err := fn2(5)
+	result2, err := fn2.Fn(5)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
