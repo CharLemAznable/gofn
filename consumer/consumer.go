@@ -1,8 +1,6 @@
 package consumer
 
-import (
-	"github.com/CharLemAznable/gofn/common"
-)
+import "github.com/CharLemAznable/gofn/common"
 
 type Consumer[T any] func(T) error
 

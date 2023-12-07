@@ -1,8 +1,6 @@
 package predicate
 
-import (
-	"github.com/CharLemAznable/gofn/common"
-)
+import "github.com/CharLemAznable/gofn/common"
 
 type Predicate[T any] func(T) (bool, error)
 

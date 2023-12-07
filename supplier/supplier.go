@@ -1,8 +1,6 @@
 package supplier
 
-import (
-	"github.com/CharLemAznable/gofn/common"
-)
+import "github.com/CharLemAznable/gofn/common"
 
 type Supplier[T any] func() (T, error)
 

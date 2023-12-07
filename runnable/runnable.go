@@ -1,8 +1,6 @@
 package runnable
 
-import (
-	"github.com/CharLemAznable/gofn/common"
-)
+import "github.com/CharLemAznable/gofn/common"
 
 type Runnable func() error
 

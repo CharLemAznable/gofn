@@ -1,15 +1,11 @@
 package common
 
-import (
-	"errors"
-	"fmt"
-)
+import "fmt"
 
 func Cast[T any](val interface{}) (T, error) {
 	t, ok := val.(T)
 	if !ok {
-		return t, errors.New(fmt.Sprintf(
-			"%#v type mismatch %T", val, t))
+		return t, fmt.Errorf("%#v type mismatch %T", val, t)
 	}
 	return t, nil
 }

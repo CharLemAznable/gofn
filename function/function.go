@@ -1,8 +1,6 @@
 package function
 
-import (
-	"github.com/CharLemAznable/gofn/common"
-)
+import "github.com/CharLemAznable/gofn/common"
 
 type Function[T any, R any] func(T) (R, error)
 
