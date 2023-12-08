@@ -1,6 +1,6 @@
 package bipredicate
 
-import "github.com/CharLemAznable/gofn/common"
+import "github.com/CharLemAznable/ge"
 
 type BiPredicate[T any, U any] func(T, U) (bool, error)
 
@@ -25,6 +25,6 @@ func (fn BiPredicate[T, U]) Test(t T, u U) bool {
 
 func (fn BiPredicate[T, U]) MustTest(t T, u U) bool {
 	b, err := fn(t, u)
-	common.PanicIfError(err)
+	ge.PanicIfError(err)
 	return b
 }

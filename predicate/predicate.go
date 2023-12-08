@@ -1,6 +1,9 @@
 package predicate
 
-import "github.com/CharLemAznable/gofn/common"
+import (
+	"github.com/CharLemAznable/ge"
+	"github.com/CharLemAznable/gofn/common"
+)
 
 type Predicate[T any] func(T) (bool, error)
 
@@ -25,12 +28,12 @@ func (fn Predicate[T]) Test(t T) bool {
 
 func (fn Predicate[T]) MustTest(t T) bool {
 	b, err := fn(t)
-	common.PanicIfError(err)
+	ge.PanicIfError(err)
 	return b
 }
 
 func (fn Predicate[T]) Execute(ctx common.Context) {
-	t, err := common.Cast[T](ctx.Get())
+	t, err := ge.Cast[T](ctx.Get())
 	if err != nil {
 		ctx.SetErr(err)
 		ctx.Set(nil)

@@ -1,6 +1,6 @@
 package bifunction
 
-import "github.com/CharLemAznable/gofn/common"
+import "github.com/CharLemAznable/ge"
 
 type BiFunction[T any, U any, R any] func(T, U) (R, error)
 
@@ -25,6 +25,6 @@ func (fn BiFunction[T, U, R]) Apply(t T, u U) R {
 
 func (fn BiFunction[T, U, R]) MustApply(t T, u U) R {
 	r, err := fn(t, u)
-	common.PanicIfError(err)
+	ge.PanicIfError(err)
 	return r
 }

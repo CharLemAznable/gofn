@@ -1,6 +1,9 @@
 package supplier
 
-import "github.com/CharLemAznable/gofn/common"
+import (
+	"github.com/CharLemAznable/ge"
+	"github.com/CharLemAznable/gofn/common"
+)
 
 type Supplier[T any] func() (T, error)
 
@@ -25,7 +28,7 @@ func (fn Supplier[T]) Get() T {
 
 func (fn Supplier[T]) MustGet() T {
 	t, err := fn()
-	common.PanicIfError(err)
+	ge.PanicIfError(err)
 	return t
 }
 

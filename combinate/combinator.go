@@ -1,6 +1,7 @@
 package combinate
 
 import (
+	"github.com/CharLemAznable/ge"
 	"github.com/CharLemAznable/gofn/common"
 	"github.com/CharLemAznable/gofn/consumer"
 	"github.com/CharLemAznable/gofn/function"
@@ -24,8 +25,8 @@ func Runnable(combinator Combinator) runnable.Runnable {
 func Supplier[T any](combinator Combinator) supplier.Supplier[T] {
 	return func() (T, error) {
 		ctx := combinator.Execute(NewContext(nil))
-		t, e := common.CastOrZero[T](ctx.Get())
-		return t, common.DefaultErrorFn(e, ctx.GetErr)
+		t, e := ge.CastOrZero[T](ctx.Get())
+		return t, ge.DefaultErrorFn(e, ctx.GetErr)
 	}
 }
 
@@ -39,8 +40,8 @@ func Consumer[T any](combinator Combinator) consumer.Consumer[T] {
 func Function[T any, R any](combinator Combinator) function.Function[T, R] {
 	return func(t T) (R, error) {
 		ctx := combinator.Execute(NewContext(t))
-		r, e := common.CastOrZero[R](ctx.Get())
-		return r, common.DefaultErrorFn(e, ctx.GetErr)
+		r, e := ge.CastOrZero[R](ctx.Get())
+		return r, ge.DefaultErrorFn(e, ctx.GetErr)
 	}
 }
 

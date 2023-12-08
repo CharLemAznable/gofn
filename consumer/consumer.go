@@ -1,6 +1,9 @@
 package consumer
 
-import "github.com/CharLemAznable/gofn/common"
+import (
+	"github.com/CharLemAznable/ge"
+	"github.com/CharLemAznable/gofn/common"
+)
 
 type Consumer[T any] func(T) error
 
@@ -24,11 +27,11 @@ func (fn Consumer[T]) Accept(t T) {
 }
 
 func (fn Consumer[T]) MustAccept(t T) {
-	common.PanicIfError(fn(t))
+	ge.PanicIfError(fn(t))
 }
 
 func (fn Consumer[T]) Execute(ctx common.Context) {
-	t, err := common.Cast[T](ctx.Get())
+	t, err := ge.Cast[T](ctx.Get())
 	if err != nil {
 		ctx.SetErr(err)
 		ctx.Set(nil)

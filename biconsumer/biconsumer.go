@@ -1,6 +1,6 @@
 package biconsumer
 
-import "github.com/CharLemAznable/gofn/common"
+import "github.com/CharLemAznable/ge"
 
 type BiConsumer[T any, U any] func(T, U) error
 
@@ -24,5 +24,5 @@ func (fn BiConsumer[T, U]) Accept(t T, u U) {
 }
 
 func (fn BiConsumer[T, U]) MustAccept(t T, u U) {
-	common.PanicIfError(fn(t, u))
+	ge.PanicIfError(fn(t, u))
 }

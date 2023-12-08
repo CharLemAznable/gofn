@@ -1,6 +1,9 @@
 package runnable
 
-import "github.com/CharLemAznable/gofn/common"
+import (
+	"github.com/CharLemAznable/ge"
+	"github.com/CharLemAznable/gofn/common"
+)
 
 type Runnable func() error
 
@@ -24,7 +27,7 @@ func (fn Runnable) Run() {
 }
 
 func (fn Runnable) MustRun() {
-	common.PanicIfError(fn())
+	ge.PanicIfError(fn())
 }
 
 func (fn Runnable) Execute(ctx common.Context) {

@@ -1,6 +1,9 @@
 package function
 
-import "github.com/CharLemAznable/gofn/common"
+import (
+	"github.com/CharLemAznable/ge"
+	"github.com/CharLemAznable/gofn/common"
+)
 
 type Function[T any, R any] func(T) (R, error)
 
@@ -25,12 +28,12 @@ func (fn Function[T, R]) Apply(t T) R {
 
 func (fn Function[T, R]) MustApply(t T) R {
 	r, err := fn(t)
-	common.PanicIfError(err)
+	ge.PanicIfError(err)
 	return r
 }
 
 func (fn Function[T, R]) Execute(ctx common.Context) {
-	t, err := common.Cast[T](ctx.Get())
+	t, err := ge.Cast[T](ctx.Get())
 	if err != nil {
 		ctx.SetErr(err)
 		ctx.Set(nil)
